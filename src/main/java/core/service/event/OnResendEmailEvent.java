@@ -1,6 +1,6 @@
 package core.service.event;
 
-import core.entity.Account;
+import core.repository.model.Account;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Locale;

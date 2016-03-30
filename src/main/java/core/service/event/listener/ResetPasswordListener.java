@@ -1,7 +1,7 @@
 package core.service.event.listener;
 
-import core.entity.Account;
-import core.entity.PasswordResetToken;
+import core.repository.model.Account;
+import core.repository.model.PasswordResetToken;
 import core.service.AccountService;
 import core.service.event.OnResetPasswordEvent;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package core.service.event.listener;
 
-import core.entity.Account;
-import core.entity.VerificationToken;
+import core.repository.model.Account;
+import core.repository.model.VerificationToken;
 import core.service.AccountService;
 import core.service.event.OnRegistrationCompleteEvent;
 import org.springframework.beans.factory.annotation.Autowired;

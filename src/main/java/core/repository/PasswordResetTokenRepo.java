@@ -1,6 +1,6 @@
 package core.repository;
 
-import core.entity.PasswordResetToken;
+import core.repository.model.PasswordResetToken;
 
 /**
  * Created by Adrian on 29/06/2015.

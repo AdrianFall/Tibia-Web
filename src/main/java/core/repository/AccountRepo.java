@@ -1,7 +1,7 @@
 package core.repository;
 
-import core.entity.Account;
-import core.entity.Test;
+import core.repository.model.Account;
+import core.repository.model.Test;
 
 /**
  * Created by Adrian on 10/05/2015.

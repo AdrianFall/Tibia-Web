@@ -1,9 +1,9 @@
 package core.service.impl;
 
-import core.entity.Account;
-import core.entity.PasswordResetToken;
-import core.entity.Test;
-import core.entity.VerificationToken;
+import core.repository.model.Account;
+import core.repository.model.PasswordResetToken;
+import core.repository.model.Test;
+import core.repository.model.VerificationToken;
 import core.repository.AccountRepo;
 import core.repository.PasswordResetTokenRepo;
 import core.repository.VerificationTokenRepo;

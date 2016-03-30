@@ -1,3 +1,12 @@
+DROP SEQUENCE IF EXISTS hibernate_sequence;
+
+CREATE SEQUENCE hibernate_sequence
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 146
+  CACHE 1;
+
 /*DROP TABLE IF EXISTS accounts_social_providers;*/
 /*DROP TABLE IF EXISTS social_provider;*/
 DROP TABLE IF EXISTS Test;

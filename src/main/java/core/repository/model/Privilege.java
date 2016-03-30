@@ -1,4 +1,4 @@
-package core.entity;
+package core.repository.model;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

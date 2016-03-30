@@ -1,14 +1,15 @@
-package core.entity;
+package core.repository.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
 /**
- * Created by Adrian on 29/06/2015.
+ * Created by Adrian on 13/05/2015.
  */
-@Entity(name = "password_reset_token")
-public class PasswordResetToken {
+@Entity(name = "verification_token")
+public class VerificationToken {
+
     // 24 h
     private static final int DEFAULT_EXPIRATION = 60 * 24;
 
@@ -25,34 +26,21 @@ public class PasswordResetToken {
     @JoinColumn(nullable = false, name = "account_id")
     private Account acc;
 
-    public PasswordResetToken(String token, Account acc) {
+
+    public VerificationToken(String token, Account acc) {
         this.token = token;
         this.acc = acc;
         expiryDate = calculateExpiryDate(DEFAULT_EXPIRATION);
     }
 
-    public PasswordResetToken() {}
+    public VerificationToken() {
+
+    }
 
     private Timestamp calculateExpiryDate(int expiryTimeMinutes) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, expiryTimeMinutes);
         return new Timestamp(cal.getTime().getTime());
-    }
-
-    public Timestamp getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Timestamp expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public Account getAcc() {
@@ -63,7 +51,24 @@ public class PasswordResetToken {
         this.acc = acc;
     }
 
+
     public Long getId() {
         return id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Timestamp getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Timestamp expiryDate) {
+        this.expiryDate = expiryDate;
     }
 }

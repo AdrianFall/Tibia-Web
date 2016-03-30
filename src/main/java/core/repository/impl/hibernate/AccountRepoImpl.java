@@ -1,8 +1,8 @@
 package core.repository.impl.hibernate;
 
-import core.entity.Account;
-import core.entity.Role;
-import core.entity.Test;
+import core.repository.model.Account;
+import core.repository.model.Role;
+import core.repository.model.Test;
 import core.repository.AccountRepo;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
