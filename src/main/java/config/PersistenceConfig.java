@@ -21,8 +21,8 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-@PropertySource({ "classpath:persistence.properties" })
-@ComponentScan({ "core.repository.impl.hibernate" })
+@PropertySource({ "classpath:properties/persistence.properties" })
+@ComponentScan({ "core.repository.impl.hibernate", "core.repository.service" })
 public class PersistenceConfig {
     @Autowired
     private Environment env;

@@ -1,9 +1,9 @@
-package core.service;
+package core.repository.service;
 
-import core.service.event.OnRegistrationCompleteEvent;
-import core.service.event.OnResendEmailEvent;
-import core.service.event.OnResetPasswordEvent;
-import core.service.exception.EmailNotSentException;
+import core.repository.service.event.OnRegistrationCompleteEvent;
+import core.repository.service.event.OnResendEmailEvent;
+import core.repository.service.event.OnResetPasswordEvent;
+import core.repository.service.exception.EmailNotSentException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;

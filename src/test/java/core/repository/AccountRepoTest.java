@@ -1,6 +1,8 @@
 package core.repository;
 
 import config.PersistenceConfig;
+import config.SpringConfig;
+import config.WebSecurityConfig;
 import core.repository.model.Account;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by Adrian on 30/03/2016.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { PersistenceConfig.class }, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = { PersistenceConfig.class, WebSecurityConfig.class, SpringConfig.class}, loader = AnnotationConfigContextLoader.class)
 @Transactional
 public class AccountRepoTest {
 

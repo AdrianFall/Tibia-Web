@@ -1,10 +1,10 @@
-package core.service;
+package core.repository.service;
 
 import core.repository.model.Account;
 import core.repository.model.PasswordResetToken;
 import core.repository.model.Test;
 import core.repository.model.VerificationToken;
-import core.service.exception.EmailExistsException;
+import core.repository.service.exception.EmailExistsException;
 
 /**
  * Created by Adrian on 09/05/2015.

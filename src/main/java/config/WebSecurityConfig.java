@@ -1,8 +1,11 @@
 package config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -10,43 +13,51 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import core.security.rest.authentication.RestAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
-import rest.authentication.RestAuthenticationEntryPoint;
-
-import javax.annotation.Resource;
 
 /**
  * Created by Adrian on 29/03/2016.
  */
 
-/*
+
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true)
+@ComponentScan(basePackages = {"core.security"})
 @EnableWebSecurity
-public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String REALM = "Secured Environment";
 
-    @Resource
-    private UserRepository userRepository;
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public BasicAuthenticationEntryPoint basicAuthenticationEntryPoint() {
         RestAuthenticationEntryPoint restAuthenticationEntryPoint = new RestAuthenticationEntryPoint();
-        restAuthenticationEntryPoint.setRealmName(SpringSecurityConfiguration.REALM);
+        restAuthenticationEntryPoint.setRealmName(WebSecurityConfig.REALM);
         return restAuthenticationEntryPoint;
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
+    public DaoAuthenticationProvider authProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userRepository);
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider());
+        auth.authenticationProvider(authProvider());
     }
 
     @Override
@@ -57,16 +68,19 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().enableSessionUrlRewriting(false).sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api
-*").permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api*").permitAll()
                 .and()
-                .authorizeRequests().antMatchers("/api
-*").authenticated()
-                .and()
-                .httpBasic().authenticationEntryPoint(basicAuthenticationEntryPoint())
+                .authorizeRequests().antMatchers("/api*").authenticated()
+                        .and()
+                        .httpBasic().authenticationEntryPoint(basicAuthenticationEntryPoint())
                 .and().csrf().disable();
 // @formatter:on
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 }
-*/
+

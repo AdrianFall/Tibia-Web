@@ -1,4 +1,4 @@
-package core.service.exception;
+package core.repository.service.exception;
 
 /**
  * Created by Adrian on 14/05/2015.

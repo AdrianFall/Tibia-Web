@@ -1,4 +1,4 @@
-package core.service.event;
+package core.repository.service.event;
 
 import core.repository.model.Account;
 import org.springframework.context.ApplicationEvent;
@@ -6,14 +6,15 @@ import org.springframework.context.ApplicationEvent;
 import java.util.Locale;
 
 /**
- * Created by Adrian on 28/06/2015.
+ * Created by Adrian on 14/05/2015.
  */
-public class OnResendEmailEvent extends ApplicationEvent {
+public class OnRegistrationCompleteEvent extends ApplicationEvent {
+
     private final String appUrl;
     private final Locale locale;
     private final Account account;
 
-    public OnResendEmailEvent(Account account, Locale locale, String appUrl) {
+    public OnRegistrationCompleteEvent(Account account, Locale locale, String appUrl) {
         super(account);
         this.account = account;
         this.locale = locale;
@@ -33,4 +34,5 @@ public class OnResendEmailEvent extends ApplicationEvent {
     public String getAppUrl() {
         return appUrl;
     }
+
 }

@@ -1,9 +1,9 @@
-package core.service.event.listener;
+package core.repository.service.event.listener;
 
 import core.repository.model.Account;
 import core.repository.model.VerificationToken;
-import core.service.AccountService;
-import core.service.event.OnResendEmailEvent;
+import core.repository.service.AccountService;
+import core.repository.service.event.OnResendEmailEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;

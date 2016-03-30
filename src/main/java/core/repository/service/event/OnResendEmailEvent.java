@@ -1,4 +1,4 @@
-package core.service.event;
+package core.repository.service.event;
 
 import core.repository.model.Account;
 import org.springframework.context.ApplicationEvent;
@@ -6,14 +6,14 @@ import org.springframework.context.ApplicationEvent;
 import java.util.Locale;
 
 /**
- * Created by Adrian on 29/06/2015.
+ * Created by Adrian on 28/06/2015.
  */
-public class OnResetPasswordEvent extends ApplicationEvent {
+public class OnResendEmailEvent extends ApplicationEvent {
     private final String appUrl;
     private final Locale locale;
     private final Account account;
 
-    public OnResetPasswordEvent(Account account, Locale locale, String appUrl) {
+    public OnResendEmailEvent(Account account, Locale locale, String appUrl) {
         super(account);
         this.account = account;
         this.locale = locale;

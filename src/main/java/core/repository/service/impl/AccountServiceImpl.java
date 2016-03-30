@@ -1,4 +1,4 @@
-package core.service.impl;
+package core.repository.service.impl;
 
 import core.repository.model.Account;
 import core.repository.model.PasswordResetToken;
@@ -7,8 +7,8 @@ import core.repository.model.VerificationToken;
 import core.repository.AccountRepo;
 import core.repository.PasswordResetTokenRepo;
 import core.repository.VerificationTokenRepo;
-import core.service.AccountService;
-import core.service.exception.EmailExistsException;
+import core.repository.service.AccountService;
+import core.repository.service.exception.EmailExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
