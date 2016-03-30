@@ -1,5 +1,6 @@
 package config;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -8,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 
 @EnableWebMvc /* Equivalent to the xml version of <mvc:annotation-driven /> */
+@ComponentScan(basePackages = {"core.controller.rest"})
 @Configuration
 public class WebConfig {
 }

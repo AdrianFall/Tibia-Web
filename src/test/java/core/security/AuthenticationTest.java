@@ -24,6 +24,7 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -39,7 +40,7 @@ public class AuthenticationTest {
     private WebApplicationContext context;
 
     private MockMvc mockMvc;
-    // part of create-all.sql script where following data is inserted : INSERT INTO account(id, email, password, enabled) VALUES (2, 'adrianq92@hotmail.com', '$2a$10$AK1rKs1jY0W0qjACmoDioO7gzCzJIxAfXDBgOi0gfyYaf.adw8m7y', TRUE);
+    // part of create-all.sql script where following data is inserted (password with Bcrypt): INSERT INTO account(id, email, password, enabled) VALUES (2, 'adrianq92@hotmail.com', '$2a$10$AK1rKs1jY0W0qjACmoDioO7gzCzJIxAfXDBgOi0gfyYaf.adw8m7y', TRUE);
     private static final String VALID_EMAIL = "adrianq92@hotmail.com";
     private static final String VALID_PASSWORD = "adiadi";
 
@@ -61,6 +62,14 @@ public class AuthenticationTest {
     public void unauthorizedLoginTest() throws Exception {
         mockMvc.perform(get("/").with(httpBasic(VALID_EMAIL, VALID_PASSWORD + "appended")))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void getUserPageTest() throws Exception {
+        mockMvc.perform(get("/api/user").with(httpBasic(VALID_EMAIL, VALID_PASSWORD)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
     }
 
 }
