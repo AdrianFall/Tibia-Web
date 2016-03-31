@@ -3,9 +3,11 @@ package core.controller.rest;
 import core.repository.model.Account;
 import core.repository.model.VerificationToken;
 import core.repository.model.form.RegistrationForm;
+import core.repository.model.form.ResendEmailForm;
 import core.repository.service.AccountService;
 import core.repository.service.EmailService;
 import core.repository.service.event.OnRegistrationCompleteEvent;
+import core.repository.service.event.OnResendEmailEvent;
 import core.repository.service.exception.EmailExistsException;
 import core.repository.service.exception.EmailNotSentException;
 import org.json.simple.JSONObject;
@@ -19,6 +21,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.xml.ws.Response;
 import java.util.Calendar;
 
 /**
@@ -52,6 +55,12 @@ public class AccountRegistrationController {
         // Obtain the account associated to the verification token
         Account acc = verificationToken.getAcc();
 
+        if (acc.isEnabled()) {
+            responseJson.put("message", messageSource.getMessage("resend.email.alreadyActivated", null, request.getLocale()));
+            responseJson.put("token", verificationToken.getToken());
+            return ResponseEntity.status(200).body(responseJson.toJSONString());
+        }
+
         // Ensure token is not expired
         Calendar cal = Calendar.getInstance();
         Long timeDiff = verificationToken.getExpiryDate().getTime() - cal.getTime().getTime();
@@ -78,6 +87,34 @@ public class AccountRegistrationController {
         responseJson.put("message", messageSource.getMessage("registration.activated", null, request.getLocale()));
         responseJson.put("token", verificationToken.getToken());
 
+        return ResponseEntity.status(200).body(responseJson.toJSONString());
+    }
+
+    @RequestMapping(value = "/resendConfirmationEmail", method = RequestMethod.POST)
+    public ResponseEntity<String> resendConfirmationEmail(@Valid @RequestBody ResendEmailForm resendEmailForm, BindingResult bResult, HttpServletRequest request) {
+        JSONObject responseJson = new JSONObject();
+        if (bResult.getFieldError("email") != null) {
+            if (bResult.getFieldError("email").getCode().equals("Pattern"))
+                responseJson.put("emailError", messageSource.getMessage("Pattern.email", null, request.getLocale()));
+            else
+                responseJson.put("emailError", bResult.getFieldError("email").getCode());
+            return ResponseEntity.status(406).body(responseJson.toJSONString());
+        }
+        Account acc = accountService.findAccount(resendEmailForm.getEmail());
+        if (acc == null) {
+            responseJson.put("emailError", messageSource.getMessage("resend.email.doesNotExist", null, request.getLocale()));
+            return ResponseEntity.status(406).body(responseJson.toJSONString());
+        } else if (acc.isEnabled()) {
+            responseJson.put("message", messageSource.getMessage("resend.email.alreadyActivated", null, request.getLocale()));
+            return ResponseEntity.status(200).body(responseJson.toJSONString());
+        }
+
+        // No error & account is disabled
+        String appUrl = request.getRequestURL().toString().split("/resendConfirmationEmail")[0];
+        // Attempt to resend the activation email
+        emailService.resendConfirmationEmail(new OnResendEmailEvent(acc, request.getLocale(), appUrl));
+
+        responseJson.put("message", messageSource.getMessage("resend.email.success", null, request.getLocale()));
         return ResponseEntity.status(200).body(responseJson.toJSONString());
     }
 
@@ -134,9 +171,6 @@ public class AccountRegistrationController {
         // Process errors
         System.out.println(bResult.getAllErrors().toString());
         JSONObject json = new JSONObject();
-            /*for (int i = 0; i < bResult.getErrorCount(); i++) {
-                System.out.println(bResult.getAllErrors().get(i));
-            }*/
 
         if (bResult.getFieldError("email") != null) {
             if (bResult.getFieldError("email").getCode().equals("Pattern"))
