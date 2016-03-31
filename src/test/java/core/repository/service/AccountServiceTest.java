@@ -5,7 +5,9 @@ import config.PersistenceConfig;
 import config.SpringConfig;
 import config.WebSecurityConfig;
 import core.repository.model.Account;
+import core.repository.model.VerificationToken;
 import core.repository.service.exception.EmailExistsException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,6 +19,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

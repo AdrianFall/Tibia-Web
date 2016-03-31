@@ -10,4 +10,5 @@ public interface VerificationTokenRepo {
     public VerificationToken createVerificationToken(VerificationToken token);
     public VerificationToken findVerificationToken(String verificationToken);
     public VerificationToken updateVerificationToken(VerificationToken token, Account acc);
+    public VerificationToken findCurrentVerificationTokenOfAccount(Account acc);
 }

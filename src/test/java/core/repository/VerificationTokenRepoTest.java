@@ -70,8 +70,7 @@ public class VerificationTokenRepoTest {
         // Ensure that it was updated
         assertNull(tokenRepo.findVerificationToken(token));
         assertNotNull(tokenRepo.findVerificationToken(newToken));
-
-
     }
+
 
 }

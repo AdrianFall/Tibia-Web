@@ -28,11 +28,21 @@ public class VerificationTokenRepoImpl implements VerificationTokenRepo {
         /*emgr.persist(token);
         emgr.flush();
         return token;*/
-        sessionFactory.getCurrentSession()
-                .saveOrUpdate(token);
-        sessionFactory.getCurrentSession()
-                .flush();
-        return token;
+        // Ensure the account doesn't already have a token associated with its acc
+        VerificationToken verificationToken = findCurrentVerificationTokenOfAccount(token.getAcc());
+        System.out.println("createVerificationToken");
+        if (verificationToken == null) {
+            sessionFactory.getCurrentSession()
+                    .saveOrUpdate(token);
+            sessionFactory.getCurrentSession()
+                    .flush();
+            return token;
+        } else {
+            System.out.println("Updating instead of creating account");
+            VerificationToken updatedToken = updateVerificationToken(token, token.getAcc());
+            return updatedToken;
+        }
+
     }
 
     @Override
@@ -49,6 +59,17 @@ public class VerificationTokenRepoImpl implements VerificationTokenRepo {
                 .add(Restrictions.eq("token", verificationToken))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).uniqueResult();
         return verToken;
+    }
+
+    @Override
+    public VerificationToken findCurrentVerificationTokenOfAccount(Account acc) {
+        if (acc == null)
+            return null;
+        VerificationToken currentVerificationToken = (VerificationToken) sessionFactory.getCurrentSession()
+                .createCriteria(VerificationToken.class)
+                .add(Restrictions.eq("acc", acc))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).uniqueResult();
+        return currentVerificationToken;
     }
 
     @Override
@@ -69,6 +90,7 @@ public class VerificationTokenRepoImpl implements VerificationTokenRepo {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).uniqueResult();
 
         if (tokenToBeUpdated != null) {
+            System.out.println("Obtained tokenToBeUpdated");
             tokenToBeUpdated.setToken(newToken.getToken());
             tokenToBeUpdated.setExpiryDate(newToken.getExpiryDate());
             sessionFactory.getCurrentSession()

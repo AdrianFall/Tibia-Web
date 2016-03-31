@@ -81,6 +81,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public VerificationToken findCurrentVerificationTokenOfAccountByEmail(String email) {
+        Account acc = findAccount(email);
+        if (acc == null)
+            return null;
+        return tokenRepo.findCurrentVerificationTokenOfAccount(acc);
+    }
+
+    @Override
     public Account findAccount(String email) {
         return accountRepo.findAccountByEmail(email);
     }

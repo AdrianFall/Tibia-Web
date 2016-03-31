@@ -14,11 +14,11 @@ public class RegistrationForm {
     @Pattern(regexp = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$")
     private String email;
 
-    @Size(min = 5, max = 120, message = "{validation.message.Size.password}")
+    @Size(min = 5, max = 120, message = "{Size.password}")
     @NotNull
     private String password;
 
-    @Size(min = 5, max = 120)
+    @Size(min = 5, max = 120, message = "{Size.confirmPassword}")
     @NotNull
     private String confirmPassword;
 
