@@ -83,9 +83,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public VerificationToken findCurrentVerificationTokenOfAccountByEmail(String email) {
         Account acc = findAccount(email);
-        if (acc == null)
-            return null;
-        return tokenRepo.findCurrentVerificationTokenOfAccount(acc);
+        return (acc == null) ? null : tokenRepo.findCurrentVerificationTokenOfAccount(acc);
     }
 
     @Override
@@ -106,6 +104,12 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public PasswordResetToken findPasswordResetToken(String token) {
         return passwordResetRepo.findPasswordResetToken(token);
+    }
+
+    @Override
+    public PasswordResetToken findCurrentPasswordResetTokenOfAccountByEmail(String email) {
+        Account acc = findAccount(email);
+        return (acc == null) ? null : passwordResetRepo.findCurrentPasswordResetTokenOfAccount(acc);
     }
 
 }

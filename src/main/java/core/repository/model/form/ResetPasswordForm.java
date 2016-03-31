@@ -15,6 +15,10 @@ public class ResetPasswordForm {
     @NotNull
     private String confirmPassword;
 
+    private String token;
+
+    private String email;
+
     public String getPassword() {
         return password;
     }
@@ -29,5 +33,21 @@ public class ResetPasswordForm {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

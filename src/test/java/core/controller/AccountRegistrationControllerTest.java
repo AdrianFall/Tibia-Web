@@ -5,6 +5,7 @@ import config.SpringConfig;
 import config.WebConfig;
 import config.WebSecurityConfig;
 import core.repository.model.Account;
+import core.repository.model.PasswordResetToken;
 import core.repository.model.VerificationToken;
 import core.repository.service.AccountService;
 import org.json.simple.JSONObject;
@@ -176,7 +177,7 @@ public class AccountRegistrationControllerTest {
         // Make sure the response body contains email
         Assert.assertNotNull(o.get("emailError"));
         Assert.assertFalse(o.get("emailError").equals(""));
-        Assert.assertEquals(o.get("emailError"), messageSource.getMessage("registration.emailExists",null, Locale.ENGLISH));
+        Assert.assertEquals(o.get("emailError"), messageSource.getMessage("registration.emailExists", null, Locale.ENGLISH));
     }
 
     private MockHttpServletRequestBuilder postForm(String email, String password, String confirmPassword) {
@@ -333,7 +334,7 @@ public class AccountRegistrationControllerTest {
     }
 
     @Test
-    public void resendActivationEmailToDisabledAccount() throws Exception {
+    public void resendActivationEmailToDisabledAccountTest() throws Exception {
         // Requires creating new acc
         registerValidAccountTest(); // Creates acc
         // Ensure the account has been created
@@ -369,7 +370,10 @@ public class AccountRegistrationControllerTest {
     }
 
     @Test
-    public void resendActivationEmailToActiveAccount() throws Exception {
+    public void resendActivationEmailToActiveAccountTest() throws Exception {
+        // Expect status 200
+        // Expect message = messageSource.getMessage("resend.email.alreadyActivated", null, request.getLocale())
+
         registrationConfirmWithValidTokenTest(); // Creates the acc with VALID_EMAIL and activates it
         // Ensure the account is created & activated
         Account acc = accountService.findAccount(VALID_EMAIL);
@@ -378,7 +382,7 @@ public class AccountRegistrationControllerTest {
 
         JSONObject json = new JSONObject();
         json.put("email", acc.getEmail());
-        // Expect status 200
+
         MvcResult mvcResult = mockMvc.perform(post("/resendConfirmationEmail")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJSONString()))
@@ -386,7 +390,7 @@ public class AccountRegistrationControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // Expect message = messageSource.getMessage("resend.email.alreadyActivated", null, request.getLocale())
+
         String resposeBody = mvcResult.getResponse().getContentAsString();
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(resposeBody);
@@ -401,7 +405,7 @@ public class AccountRegistrationControllerTest {
     }
 
     @Test
-    public void resendActivationEmailToNotExistingAccount() throws Exception {
+    public void resendActivationEmailToNotExistingAccountTest() throws Exception {
         // Expect status 406
         // Expect emailError = messageSource.getMessage("resend.email.doesNotExist", null, request.getLocale())
 
@@ -414,7 +418,6 @@ public class AccountRegistrationControllerTest {
                 .andExpect(status().isNotAcceptable())
                 .andReturn();
 
-        // Expect message = messageSource.getMessage("resend.email.alreadyActivated", null, request.getLocale())
         String resposeBody = mvcResult.getResponse().getContentAsString();
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(resposeBody);
@@ -427,12 +430,11 @@ public class AccountRegistrationControllerTest {
     }
 
     @Test
-    public void resendActivationEmailWithInvalidEmailPattern() throws Exception {
+    public void resendActivationEmailWithInvalidEmailPatternTest() throws Exception {
         // Expect status 406
         // Expect emailError = messageSource.getMessage("Pattern.email", null, request.getLocale())
         JSONObject json = new JSONObject();
         json.put("email", "notvalidpattern");
-        // Expect status 200
         MvcResult mvcResult = mockMvc.perform(post("/resendConfirmationEmail")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJSONString()))
@@ -440,7 +442,6 @@ public class AccountRegistrationControllerTest {
                 .andExpect(status().isNotAcceptable())
                 .andReturn();
 
-        // Expect message = messageSource.getMessage("resend.email.alreadyActivated", null, request.getLocale())
         String resposeBody = mvcResult.getResponse().getContentAsString();
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(resposeBody);
@@ -451,5 +452,289 @@ public class AccountRegistrationControllerTest {
         Assert.assertFalse(o.get("emailError").equals(""));
         Assert.assertEquals(o.get("emailError"), messageSource.getMessage("Pattern.email", null, Locale.ENGLISH));
     }
+
+    /* Reset Password tests */
+    @Test
+    public void requestResetPasswordTest() throws Exception {
+        //  both enabled and disabled accounts are permitted to change account
+
+        // Expect status 200
+        // Expect message = messageSource.getMessage("request.reset.password.success"......
+
+        // Requires creating new acc
+        registrationConfirmWithValidTokenTest(); // Creates acc and activates the account with token
+        // Ensure the account has been created
+        Account acc = accountService.findAccount(VALID_EMAIL);
+        Assert.assertNotNull(acc);
+        // Ensure the account is activated - otherwise the authentication test on get(/api/user) can't be performed
+        Assert.assertEquals(true, acc.isEnabled());
+
+        // Find the current reset token for the acc - and make sure it doesn't yet exist
+        PasswordResetToken passwordResetToken = accountService.findCurrentPasswordResetTokenOfAccountByEmail(VALID_EMAIL);
+        Assert.assertNull(passwordResetToken);
+
+
+        JSONObject json = new JSONObject();
+        json.put("email", VALID_EMAIL);
+        // Expect status 200
+        MvcResult mvcResult = mockMvc.perform(post("/requestResetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toJSONString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String resposeBody = mvcResult.getResponse().getContentAsString();
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(resposeBody);
+        JSONObject o = (JSONObject) obj;
+        System.out.println(o.toString());
+        Assert.assertNotNull(o);
+        Assert.assertNotNull(o.get("message"));
+        Assert.assertFalse(o.get("message").equals(""));
+        Assert.assertEquals(o.get("message"), messageSource.getMessage("request.reset.password.success", null, Locale.ENGLISH));
+
+        // Obtain the token that would be normally available through email message
+        passwordResetToken = accountService.findCurrentPasswordResetTokenOfAccountByEmail(VALID_EMAIL);
+        Assert.assertNotNull(passwordResetToken);
+
+    }
+
+    @Test
+    public void requestResetPasswordWithInvalidEmailPatternTest() throws Exception {
+        // Expect status 406
+        // Expect error = messageSource.getMessage("Pattern.email", null, Locale.ENGLISH)
+
+        JSONObject json = new JSONObject();
+        json.put("email", "wrongemailpattern");
+        MvcResult mvcResult = mockMvc.perform(post("/requestResetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toJSONString()))
+                .andDo(print())
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        String resposeBody = mvcResult.getResponse().getContentAsString();
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(resposeBody);
+        JSONObject o = (JSONObject) obj;
+        System.out.println(o.toString());
+        Assert.assertNotNull(o);
+        Assert.assertNotNull(o.get("error"));
+        Assert.assertFalse(o.get("error").equals(""));
+        Assert.assertEquals(o.get("error"), messageSource.getMessage("Pattern.email", null, Locale.ENGLISH));
+
+        // Ensure that no token was created for that email
+        PasswordResetToken passwordResetToken = accountService.findCurrentPasswordResetTokenOfAccountByEmail("rongemailpattern");
+        Assert.assertNull(passwordResetToken);
+    }
+
+    @Test
+    public void requestResetPasswordWithNotExistingEmailTest() throws Exception {
+        // Expect status 406
+        // Expect message = "request.reset.password.doesNotExist"
+        JSONObject json = new JSONObject();
+        json.put("email", "not@exist.ing");
+        MvcResult mvcResult = mockMvc.perform(post("/requestResetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toJSONString()))
+                .andDo(print())
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        String resposeBody = mvcResult.getResponse().getContentAsString();
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(resposeBody);
+        JSONObject o = (JSONObject) obj;
+        System.out.println(o.toString());
+        Assert.assertNotNull(o);
+        Assert.assertNotNull(o.get("error"));
+        Assert.assertFalse(o.get("error").equals(""));
+        Assert.assertEquals(o.get("error"), messageSource.getMessage("request.reset.password.doesNotExist", null, Locale.ENGLISH));
+
+        // Ensure that no token was created for that email
+        PasswordResetToken passwordResetToken = accountService.findCurrentPasswordResetTokenOfAccountByEmail("rongemailpattern");
+        Assert.assertNull(passwordResetToken);
+    }
+
+    @Test
+    public void resetPasswordTest() throws Exception {
+        // Expect status 200
+        // Expect "reset.password.success"
+        // PasswordResetToken to be associated with an account
+        requestResetPasswordTest();  // for account with email : VALID_EMAIL
+
+        PasswordResetToken passwordResetToken = accountService.findCurrentPasswordResetTokenOfAccountByEmail(VALID_EMAIL);
+        Assert.assertNotNull(passwordResetToken);
+
+        // Ensure http basic does still work for current password
+        mockMvc.perform(get("/api/user").with(httpBasic(VALID_EMAIL, VALID_PASSWORD)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        JSONObject json = new JSONObject();
+        json.put("email", passwordResetToken.getAcc().getEmail());
+        json.put("token", passwordResetToken.getToken());
+        json.put("password", "newvalidpassword");
+        json.put("confirmPassword", "newvalidpassword");
+        MvcResult mvcResult = mockMvc.perform(post("/resetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toJSONString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String resposeBody = mvcResult.getResponse().getContentAsString();
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(resposeBody);
+        JSONObject o = (JSONObject) obj;
+        System.out.println(o.toString());
+        Assert.assertNotNull(o);
+        Assert.assertNotNull(o.get("message"));
+        Assert.assertFalse(o.get("message").equals(""));
+        Assert.assertEquals(o.get("message"), messageSource.getMessage("reset.password.success", null, Locale.ENGLISH));
+
+        // Ensure http basic works for new password
+        mockMvc.perform(get("/api/user").with(httpBasic(VALID_EMAIL, "newvalidpassword")))
+                .andDo(print())
+                .andExpect(status().isOk());
+        // Ensure http basic does not work for old password
+        mockMvc.perform(get("/api/user").with(httpBasic(VALID_EMAIL, VALID_PASSWORD)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void resetPasswordMismatchingTest() throws Exception {
+        // Expect status 406
+        // Expect error = registration.passwordMismatch
+
+        JSONObject json = new JSONObject();
+        json.put("password", VALID_PASSWORD);
+        json.put("confirmPassword", "notthesameone");
+        MvcResult mvcResult = mockMvc.perform(post("/resetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toJSONString()))
+                .andDo(print())
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        String resposeBody = mvcResult.getResponse().getContentAsString();
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(resposeBody);
+        JSONObject o = (JSONObject) obj;
+        System.out.println(o.toString());
+        Assert.assertNotNull(o);
+        Assert.assertNotNull(o.get("passwordError"));
+        Assert.assertFalse(o.get("passwordError").equals(""));
+        Assert.assertEquals(o.get("passwordError"), messageSource.getMessage("registration.passwordMismatch", null, Locale.ENGLISH));
+
+        Assert.assertNotNull(o.get("confirmPasswordError"));
+        Assert.assertFalse(o.get("confirmPasswordError").equals(""));
+        Assert.assertEquals(o.get("confirmPasswordError"), messageSource.getMessage("registration.passwordMismatch", null, Locale.ENGLISH));
+
+    }
+
+    @Test
+    public void resetPasswordWithIncorrectSizeTest() throws Exception {
+        // Expect status 406
+        // Expect "Size.password"
+        JSONObject json = new JSONObject();
+        json.put("password", "shor");
+        json.put("confirmPassword", "shor");
+        MvcResult mvcResult = mockMvc.perform(post("/resetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toJSONString()))
+                .andDo(print())
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        String resposeBody = mvcResult.getResponse().getContentAsString();
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(resposeBody);
+        JSONObject o = (JSONObject) obj;
+        System.out.println(o.toString());
+        Assert.assertNotNull(o);
+        Assert.assertNotNull(o.get("passwordError"));
+        Assert.assertFalse(o.get("passwordError").equals(""));
+        Assert.assertEquals(o.get("passwordError"), messageSource.getMessage("Size.password", null, Locale.ENGLISH));
+
+        Assert.assertNotNull(o.get("confirmPasswordError"));
+        Assert.assertFalse(o.get("confirmPasswordError").equals(""));
+        Assert.assertEquals(o.get("confirmPasswordError"), messageSource.getMessage("Size.password", null, Locale.ENGLISH));
+    }
+
+    @Test
+    public void resetPasswordWithInvalidTokenTest() throws Exception {
+        // Expect status 406
+        // Expect "reset.password.token.invalid"
+
+        requestResetPasswordTest();  // for account with email : VALID_EMAIL
+
+        PasswordResetToken passwordResetToken = accountService.findCurrentPasswordResetTokenOfAccountByEmail(VALID_EMAIL);
+        Assert.assertNotNull(passwordResetToken);
+
+        JSONObject json = new JSONObject();
+        json.put("email", passwordResetToken.getAcc().getEmail());
+        json.put("token", passwordResetToken.getToken() + "appended");
+        json.put("password", "newvalidpassword");
+        json.put("confirmPassword", "newvalidpassword");
+        MvcResult mvcResult = mockMvc.perform(post("/resetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toJSONString()))
+                .andDo(print())
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        String resposeBody = mvcResult.getResponse().getContentAsString();
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(resposeBody);
+        JSONObject o = (JSONObject) obj;
+        System.out.println(o.toString());
+        Assert.assertNotNull(o);
+        Assert.assertNotNull(o.get("error"));
+        Assert.assertFalse(o.get("error").equals(""));
+        Assert.assertEquals(o.get("error"), messageSource.getMessage("reset.password.token.invalid", null, Locale.ENGLISH));
+
+    }
+
+    @Test
+    public void resetPasswordWithValidTokenButInvalidEmailTest() throws Exception {
+        // Expect status 406
+        // Expect "reset.password.error.email"
+
+        requestResetPasswordTest();  // for account with email : VALID_EMAIL
+
+        PasswordResetToken passwordResetToken = accountService.findCurrentPasswordResetTokenOfAccountByEmail(VALID_EMAIL);
+        Assert.assertNotNull(passwordResetToken);
+
+        JSONObject json = new JSONObject();
+        json.put("email", passwordResetToken.getAcc().getEmail() + "appended");
+        json.put("token", passwordResetToken.getToken());
+        json.put("password", "newvalidpassword");
+        json.put("confirmPassword", "newvalidpassword");
+        MvcResult mvcResult = mockMvc.perform(post("/resetPassword")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json.toJSONString()))
+                .andDo(print())
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        String resposeBody = mvcResult.getResponse().getContentAsString();
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(resposeBody);
+        JSONObject o = (JSONObject) obj;
+        System.out.println(o.toString());
+        Assert.assertNotNull(o);
+        Assert.assertNotNull(o.get("error"));
+        Assert.assertFalse(o.get("error").equals(""));
+        Assert.assertEquals(o.get("error"), messageSource.getMessage("reset.password.error.email", null, Locale.ENGLISH));
+
+    }
+
+
+
+
+
 
 }

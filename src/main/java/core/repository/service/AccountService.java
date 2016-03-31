@@ -19,6 +19,7 @@ public interface AccountService {
     public VerificationToken updateVerificationToken(VerificationToken newToken, Account acc);
     public PasswordResetToken createPasswordResetToken(Account acc, String token);
     public PasswordResetToken findPasswordResetToken(String token);
+    public PasswordResetToken findCurrentPasswordResetTokenOfAccountByEmail(String email);
     public String encodePassword(String password);
     public Test getTest(Account acc);
     public Test setTest(Account acc, String testWord);
