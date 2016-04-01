@@ -130,10 +130,11 @@ public class AccountRegistrationController {
         }
 
         // Check if the provided email corresponds to the one associated with passwordResetToken
-        if (resetPasswordForm.getEmail() == null || !resetPasswordForm.getEmail().equals(passwordResetToken.getAcc().getEmail())) {
+        // nevermind that check, lets allow users to change password just through having a valid token
+        /*if (resetPasswordForm.getEmail() == null || !resetPasswordForm.getEmail().equals(passwordResetToken.getAcc().getEmail())) {
             responseJson.put("error", messageSource.getMessage("reset.password.error.email", null, request.getLocale()));
             return ResponseEntity.status(406).body(responseJson.toJSONString());
-        }
+        }*/
 
         // Check if expired
         Calendar cal = Calendar.getInstance();

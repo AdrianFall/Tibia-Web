@@ -573,7 +573,6 @@ public class AccountRegistrationControllerTest {
                 .andExpect(status().isOk());
 
         JSONObject json = new JSONObject();
-        json.put("email", passwordResetToken.getAcc().getEmail());
         json.put("token", passwordResetToken.getToken());
         json.put("password", "newvalidpassword");
         json.put("confirmPassword", "newvalidpassword");
@@ -675,7 +674,6 @@ public class AccountRegistrationControllerTest {
         Assert.assertNotNull(passwordResetToken);
 
         JSONObject json = new JSONObject();
-        json.put("email", passwordResetToken.getAcc().getEmail());
         json.put("token", passwordResetToken.getToken() + "appended");
         json.put("password", "newvalidpassword");
         json.put("confirmPassword", "newvalidpassword");
@@ -697,7 +695,7 @@ public class AccountRegistrationControllerTest {
         Assert.assertEquals(o.get("error"), messageSource.getMessage("reset.password.token.invalid", null, Locale.ENGLISH));
 
     }
-
+/*
     @Test
     public void resetPasswordWithValidTokenButInvalidEmailTest() throws Exception {
         // Expect status 406
@@ -730,7 +728,7 @@ public class AccountRegistrationControllerTest {
         Assert.assertFalse(o.get("error").equals(""));
         Assert.assertEquals(o.get("error"), messageSource.getMessage("reset.password.error.email", null, Locale.ENGLISH));
 
-    }
+    }*/
 
 
 
