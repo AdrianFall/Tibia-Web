@@ -52,12 +52,13 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
             String confirmationURL = event.getAppUrl() + "/registrationConfirm?token=" + token;
 
             String msg = messageSource.getMessage("registration.email.message", null, event.getLocale());
+            msg += " " + confirmationURL + " \n Alternatively input the following activation code into your app: " + token;
             System.out.println("The email message is: " + msg);
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipentEmail));
             mimeMessage.setSubject(subject, "UTF-8");
-            mimeMessage.setText(msg + " " + confirmationURL, "UTF-8");
+            mimeMessage.setText(msg, "UTF-8");
 
             System.out.println("Sending mail to " + recipentEmail);
             // Send the mail

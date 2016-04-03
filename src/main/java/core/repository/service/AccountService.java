@@ -23,4 +23,5 @@ public interface AccountService {
     public String encodePassword(String password);
     public Test getTest(Account acc);
     public Test setTest(Account acc, String testWord);
+    public boolean deleteAllAccounts();
 }

@@ -22,8 +22,8 @@ public class CORSFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         System.out.println("doFilter");
         HttpServletResponse response = (HttpServletResponse) res;
-        if (req instanceof HttpServletRequest)  {
-            HttpServletRequest httpRequest = (HttpServletRequest) req;
+        HttpServletRequest httpRequest = (HttpServletRequest) req;
+        if (req instanceof HttpServletRequest && httpRequest.getHeader("Origin") != null)  {
             response.setHeader("Access-Control-Allow-Origin", httpRequest.getHeader("Origin"));
         } else {
             response.setHeader("Access-Control-Allow-Origin", "*");

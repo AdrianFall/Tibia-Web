@@ -591,7 +591,8 @@ public class AccountRegistrationControllerTest {
         Assert.assertNotNull(o);
         Assert.assertNotNull(o.get("message"));
         Assert.assertFalse(o.get("message").equals(""));
-        Assert.assertEquals(o.get("message"), messageSource.getMessage("reset.password.success", null, Locale.ENGLISH));
+        Assert.assertTrue(o.get("message").toString().contains(messageSource.getMessage("reset.password.success", null, Locale.ENGLISH)));
+        /*Assert.assertEquals(o.get("message"), messageSource.getMessage("reset.password.success", null, Locale.ENGLISH));*/
 
         // Ensure http basic works for new password
         mockMvc.perform(get("/api/user").with(httpBasic(VALID_EMAIL, "newvalidpassword")))

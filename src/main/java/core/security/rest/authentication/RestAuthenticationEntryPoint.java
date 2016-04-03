@@ -16,8 +16,8 @@ public class RestAuthenticationEntryPoint extends BasicAuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest req, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        if (req instanceof HttpServletRequest)  {
-            HttpServletRequest httpRequest = (HttpServletRequest) req;
+        HttpServletRequest httpRequest = (HttpServletRequest) req;
+        if (req instanceof HttpServletRequest && httpRequest.getHeader("Origin") != null)  {
             response.setHeader("Access-Control-Allow-Origin", httpRequest.getHeader("Origin"));
         } else {
             response.setHeader("Access-Control-Allow-Origin", "*");

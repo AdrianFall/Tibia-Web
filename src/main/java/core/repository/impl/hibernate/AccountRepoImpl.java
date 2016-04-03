@@ -5,6 +5,7 @@ import core.repository.model.Role;
 import core.repository.model.Test;
 import core.repository.AccountRepo;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,5 +181,16 @@ public class AccountRepoImpl implements AccountRepo {
         sessionFactory.getCurrentSession()
                 .flush();
         return test;
+    }
+
+    @Override
+    public boolean deleteAllAccounts() {
+        Query query = sessionFactory.getCurrentSession().createSQLQuery("DELETE FROM Test; DELETE FROM persistent_logins; DELETE FROM password_reset_token; DELETE FROM verification_token; DELETE FROM accounts_roles;");
+        query.executeUpdate();
+        Query finalQuery = sessionFactory.getCurrentSession().createSQLQuery("DELETE FROM account;");
+        int numberOfEntitiesUpdated = finalQuery.executeUpdate();
+        if (numberOfEntitiesUpdated > 0)
+            return true;
+        return false;
     }
 }

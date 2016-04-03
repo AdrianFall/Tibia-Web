@@ -103,7 +103,7 @@ public class AccountRegistrationController {
         Authentication auth = new UsernamePasswordAuthenticationToken(acc, null, userDetailsService.loadUserByUsername(acc.getEmail()).getAuthorities());
         System.out.println("Authorities of " + acc.getEmail() + " are : " + auth.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
-        jsonResponse.put("email", acc.getEmail());
+        jsonResponse.put("message", messageSource.getMessage("reset.password.success", null, request.getLocale()));
         return ResponseEntity.status(200).body(jsonResponse.toJSONString());
     }
 
@@ -113,7 +113,11 @@ public class AccountRegistrationController {
 
         JSONObject responseJson = new JSONObject();
 
-        if (!resetPasswordForm.getPassword().equals(resetPasswordForm.getConfirmPassword())) {
+        if (resetPasswordForm.getPassword() == null) {
+            bResult.rejectValue("password", messageSource.getMessage("reset.password.password.null", null, request.getLocale()));
+        } else if (resetPasswordForm.getConfirmPassword() == null) {
+            bResult.rejectValue("confirmPassword", messageSource.getMessage("reset.password.password.null", null, request.getLocale()));
+        } else if (!resetPasswordForm.getPassword().equals(resetPasswordForm.getConfirmPassword())) {
             bResult.rejectValue("password", messageSource.getMessage("registration.passwordMismatch", null, webRequest.getLocale()));
             bResult.rejectValue("confirmPassword", messageSource.getMessage("registration.passwordMismatch", null, webRequest.getLocale()));
             System.out.println("Password match validation - failed.");

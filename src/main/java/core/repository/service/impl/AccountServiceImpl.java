@@ -54,6 +54,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public boolean deleteAllAccounts() {
+        return accountRepo.deleteAllAccounts();
+    }
+
+    @Override
     public Account createAccount(Account acc) throws EmailExistsException {
         if (accountRepo.findAccountByEmail(acc.getEmail()) != null) {
             throw new EmailExistsException("Email already exists.");

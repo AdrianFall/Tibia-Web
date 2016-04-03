@@ -8,16 +8,13 @@ import javax.validation.constraints.Size;
  */
 public class ResetPasswordForm {
     @Size(min = 5, max = 120, message = "{validation.message.Size.password}")
-    @NotNull
     private String password;
 
     @Size(min = 5, max = 120)
-    @NotNull
     private String confirmPassword;
 
     private String token;
 
-    private String email;
 
     public String getPassword() {
         return password;
@@ -41,13 +38,5 @@ public class ResetPasswordForm {
 
     public String getToken() {
         return token;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }

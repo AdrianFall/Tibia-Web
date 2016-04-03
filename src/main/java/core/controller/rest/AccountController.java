@@ -46,4 +46,11 @@ public class AccountController {
         jsonObject.put("email", (user != null) ? user.getName() : "");
         return jsonObject.toString();
     }
+
+    @RequestMapping(value = "/deleteAll", method = RequestMethod.GET, produces = "application/json")
+    public String deleteAllAccounts() {
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("deleted", (accountService.deleteAllAccounts()) ? true : false);
+        return jsonResponse.toString();
+    }
 }

@@ -57,15 +57,8 @@ public class AuthenticationTest {
 
     @Test
     public void invalidLoginTest() throws Exception {
-        mockMvc.perform(get("/").with(httpBasic(VALID_EMAIL, VALID_PASSWORD + "appended")))
+        mockMvc.perform(get("/api/user").with(httpBasic(VALID_EMAIL, VALID_PASSWORD + "appended")))
                 .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void noAuthorizationHeaderTest() throws Exception {
-        mockMvc.perform(get("/user"))
-                .andExpect(status().isNotFound())
-                .andDo(print());
     }
 
     @Test
