@@ -15,8 +15,14 @@ import java.io.IOException;
 public class RestAuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.addHeader("Access-Control-Allow-Origin", "null");
+    public void commence(HttpServletRequest req, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        if (req instanceof HttpServletRequest)  {
+            HttpServletRequest httpRequest = (HttpServletRequest) req;
+            response.setHeader("Access-Control-Allow-Origin", httpRequest.getHeader("Origin"));
+        } else {
+            response.setHeader("Access-Control-Allow-Origin", "*");
+        }
+        /*response.addHeader("Access-Control-Allow-Origin", "*");*/
         response.addHeader("WWW-Authenticate", "RestBasic realm=\"" + getRealmName() + "\"");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentLength(0);
