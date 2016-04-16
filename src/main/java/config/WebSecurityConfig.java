@@ -1,5 +1,6 @@
 package config;
 
+import filter.CORSFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import core.security.rest.authentication.RestAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * Created by Adrian on 29/03/2016.
@@ -34,6 +36,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Bean
+    public CORSFilter corsFilter() {
+        return new CORSFilter();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -64,13 +71,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 // @formatter:off
         http
+                .addFilterBefore(corsFilter(), BasicAuthenticationFilter.class)
                 .exceptionHandling().authenticationEntryPoint(basicAuthenticationEntryPoint())
                 .and()
                 .sessionManagement().enableSessionUrlRewriting(false).sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api*").permitAll()
                 .and()
-                .authorizeRequests().antMatchers("/*").authenticated()
+                .authorizeRequests().antMatchers("/api*").authenticated()
                         .and()
                         .httpBasic().authenticationEntryPoint(basicAuthenticationEntryPoint())
                 .and().csrf().disable();

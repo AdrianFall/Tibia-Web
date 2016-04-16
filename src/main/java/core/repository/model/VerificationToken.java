@@ -33,6 +33,12 @@ public class VerificationToken {
         expiryDate = calculateExpiryDate(DEFAULT_EXPIRATION);
     }
 
+    public VerificationToken(String token, Account acc, Timestamp expiryDate) {
+        this.token = token;
+        this.acc = acc;
+        this.expiryDate = expiryDate;
+    }
+
     public VerificationToken() {
 
     }

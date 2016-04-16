@@ -31,6 +31,12 @@ public class PasswordResetToken {
         expiryDate = calculateExpiryDate(DEFAULT_EXPIRATION);
     }
 
+    public PasswordResetToken(String token, Account acc, Timestamp expiryDate) {
+        this.token = token;
+        this.acc = acc;
+        this.expiryDate = expiryDate;
+    }
+
     public PasswordResetToken() {}
 
     private Timestamp calculateExpiryDate(int expiryTimeMinutes) {

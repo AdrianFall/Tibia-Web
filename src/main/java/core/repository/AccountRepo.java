@@ -15,4 +15,5 @@ public interface AccountRepo {
     public Account updateAccount(Account acc);
     public Test getTest(Account acc);
     public Test setTestWord(Account acc, String testWord);
+    public boolean deleteAllAccounts();
 }

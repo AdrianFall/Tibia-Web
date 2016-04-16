@@ -1,5 +1,6 @@
 package core.repository.impl.hibernate;
 
+import core.repository.model.Account;
 import core.repository.model.PasswordResetToken;
 import core.repository.PasswordResetTokenRepo;
 import org.hibernate.Criteria;
@@ -24,14 +25,20 @@ public class PasswordResetTokenRepoImpl implements PasswordResetTokenRepo {
 
     @Override
     public PasswordResetToken createPasswordResetToken(PasswordResetToken token) {
-        /*emgr.persist(token);
-        emgr.flush();
-        return token;*/
-        sessionFactory.getCurrentSession()
-                .saveOrUpdate(token);
-        sessionFactory.getCurrentSession()
-                .flush();
-        return token;
+
+
+        PasswordResetToken passwordResetToken = findCurrentPasswordResetTokenOfAccount(token.getAcc());
+        if (passwordResetToken == null) {
+            sessionFactory.getCurrentSession()
+                    .saveOrUpdate(token);
+            sessionFactory.getCurrentSession()
+                    .flush();
+            return token;
+        } else {
+            System.out.println("Updating instead of creating passwordResetToken");
+            PasswordResetToken updatedToken = updatePasswordResetToken(token, token.getAcc());
+            return updatedToken;
+        }
     }
 
     @Override
@@ -47,5 +54,38 @@ public class PasswordResetTokenRepoImpl implements PasswordResetTokenRepo {
                 .add(Restrictions.eq("token", token))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).uniqueResult();
         return passwordResetToken;
+    }
+
+
+
+    @Override
+    public PasswordResetToken findCurrentPasswordResetTokenOfAccount(Account acc) {
+        if (acc == null)
+            return null;
+        PasswordResetToken currentPasswordResetToken = (PasswordResetToken) sessionFactory.getCurrentSession()
+                .createCriteria(PasswordResetToken.class)
+                .add(Restrictions.eq("acc", acc))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).uniqueResult();
+        return currentPasswordResetToken;
+    }
+
+    @Override
+    public PasswordResetToken updatePasswordResetToken(PasswordResetToken newToken, Account acc) {
+        PasswordResetToken tokenToBeUpdated = (PasswordResetToken) sessionFactory.getCurrentSession()
+                .createCriteria(PasswordResetToken.class)
+                .add(Restrictions.eq("acc", acc))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).uniqueResult();
+
+        if (tokenToBeUpdated != null) {
+            System.out.println("Obtained tokenToBeUpdated");
+            tokenToBeUpdated.setToken(newToken.getToken());
+            tokenToBeUpdated.setExpiryDate(newToken.getExpiryDate());
+            sessionFactory.getCurrentSession()
+                    .saveOrUpdate(tokenToBeUpdated);
+            sessionFactory.getCurrentSession()
+                    .flush();
+        }
+
+        return tokenToBeUpdated;
     }
 }

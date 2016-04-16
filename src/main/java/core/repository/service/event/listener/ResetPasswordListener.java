@@ -46,15 +46,16 @@ public class ResetPasswordListener implements ApplicationListener<OnResetPasswor
 
             String recipentEmail = acc.getEmail();
             String subject = messageSource.getMessage("request.reset.password.email.subject", null, event.getLocale());
-            String confirmationURL = event.getAppUrl() + "/resetPassword?token=" + token;
+            String confirmationURL = event.getAppUrl() + "/resetPassword?token=" + token + "&email=" + acc.getEmail();
 
             String msg = messageSource.getMessage("request.reset.password.email.message", null, event.getLocale());
+            msg += " " + confirmationURL + " \n Alternatively input the following recovery code into your app: " + token;
             System.out.println("The email message is: " + msg);
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipentEmail));
             mimeMessage.setSubject(subject, "UTF-8");
-            mimeMessage.setText(msg + " " + confirmationURL, "UTF-8");
+            mimeMessage.setText(msg, "UTF-8");
 
 
             System.out.println("Sending mail to " + recipentEmail);

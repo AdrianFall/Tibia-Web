@@ -54,6 +54,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public boolean deleteAllAccounts() {
+        return accountRepo.deleteAllAccounts();
+    }
+
+    @Override
     public Account createAccount(Account acc) throws EmailExistsException {
         if (accountRepo.findAccountByEmail(acc.getEmail()) != null) {
             throw new EmailExistsException("Email already exists.");
@@ -81,6 +86,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public VerificationToken findCurrentVerificationTokenOfAccountByEmail(String email) {
+        Account acc = findAccount(email);
+        return (acc == null) ? null : tokenRepo.findCurrentVerificationTokenOfAccount(acc);
+    }
+
+    @Override
     public Account findAccount(String email) {
         return accountRepo.findAccountByEmail(email);
     }
@@ -98,6 +109,12 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public PasswordResetToken findPasswordResetToken(String token) {
         return passwordResetRepo.findPasswordResetToken(token);
+    }
+
+    @Override
+    public PasswordResetToken findCurrentPasswordResetTokenOfAccountByEmail(String email) {
+        Account acc = findAccount(email);
+        return (acc == null) ? null : passwordResetRepo.findCurrentPasswordResetTokenOfAccount(acc);
     }
 
 }

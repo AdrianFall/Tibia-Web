@@ -54,12 +54,13 @@ public class ResendEmailListener implements ApplicationListener<OnResendEmailEve
                 String confirmationURL = event.getAppUrl() + "/registrationConfirm?token=" + updatedToken.getToken();
 
                 String msg = messageSource.getMessage("registration.email.message", null, event.getLocale());
+                msg += " " + confirmationURL + " \n Alternatively input the following activation code into your app: " + updatedToken.getToken();
                 System.out.println("The email message is: " + msg);
 
                 MimeMessage mimeMessage = mailSender.createMimeMessage();
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipentEmail));
                 mimeMessage.setSubject(subject, "UTF-8");
-                mimeMessage.setText(msg + " " + confirmationURL, "UTF-8");
+                mimeMessage.setText(msg, "UTF-8");
 
                 // Send the mail
                 mailSender.send(mimeMessage);

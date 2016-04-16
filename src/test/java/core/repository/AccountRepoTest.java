@@ -41,6 +41,11 @@ public class AccountRepoTest {
     }
 
     @Test
+    public void accountNotActivatedTest() throws Exception {
+        assertEquals(false, repo.findAccountByEmail("xa@xa").isEnabled());
+    }
+
+    @Test
     public void findTheFirstAccountById() throws Exception {
         assertNotNull(repo.findAccount(firstAcc.getId()));
     }
@@ -57,4 +62,5 @@ public class AccountRepoTest {
         assertNotNull(repo.updateAccount(firstAcc));
         assertEquals("re@re.re", firstAcc.getEmail());
     }
+
 }

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -24,9 +25,9 @@ public class SpringConfig {
     private Environment env;
 
     @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:properties/messages");
+    public ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource  messageSource = new ResourceBundleMessageSource ();
+        messageSource.setBasename("properties/messages");
         messageSource.setCacheSeconds(5);
         messageSource.setDefaultEncoding("UTF-8");
 
