@@ -56,6 +56,8 @@ public class PersistenceConfig {
         return sessionFactory;
     }
 
+
+
     @Bean
     @Autowired
     public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
