@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Spring-Rest-Template.iml" filepath="$PROJECT_DIR$/Spring-Rest-Template.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Tibia-Web.iml" filepath="$PROJECT_DIR$/Tibia-Web.iml" />
     </modules>
   </component>
 </project>
