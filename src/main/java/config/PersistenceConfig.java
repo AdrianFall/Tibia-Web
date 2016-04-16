@@ -47,6 +47,21 @@ public class PersistenceConfig {
     }
 
     @Bean
+    public DataSource crawlerDataSource() {
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        /*dataSource.setDriverClassName(Preconditions.checkNotNull(env.getProperty("jdbc.driverClassName")));
+        dataSource.setUrl(Preconditions.checkNotNull(env.getProperty("jdbc.url")));
+        dataSource.setUsername(Preconditions.checkNotNull(env.getProperty("jdbc.user")));
+        dataSource.setPassword(Preconditions.checkNotNull(env.getProperty("jdbc.pass")));*/
+        dataSource.setDriverClassName(env.getProperty("crawler.dataSource.driverClassName"));
+        dataSource.setUrl(env.getProperty("crawler.dataSource.url"));
+        dataSource.setUsername(env.getProperty("crawler.dataSource.username"));
+        dataSource.setPassword(env.getProperty("crawler.dataSource.password"));
+
+        return dataSource;
+    }
+
+    @Bean
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
@@ -56,6 +71,15 @@ public class PersistenceConfig {
         return sessionFactory;
     }
 
+    @Bean
+    public LocalSessionFactoryBean crawlerSessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(crawlerDataSource());
+        sessionFactory.setPackagesToScan(new String[]{"core.repository.model"});
+        sessionFactory.setHibernateProperties(hibernateProperties());
+
+        return sessionFactory;
+    }
 
 
     @Bean
