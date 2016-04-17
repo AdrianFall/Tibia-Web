@@ -1,4 +1,4 @@
-package core.repository.model;
+package core.repository.model.web;
 
 import javax.persistence.*;
 import java.util.Set;

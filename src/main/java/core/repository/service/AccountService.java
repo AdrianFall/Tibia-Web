@@ -1,9 +1,9 @@
 package core.repository.service;
 
-import core.repository.model.Account;
-import core.repository.model.PasswordResetToken;
-import core.repository.model.Test;
-import core.repository.model.VerificationToken;
+import core.repository.model.web.Account;
+import core.repository.model.web.PasswordResetToken;
+import core.repository.model.web.Test;
+import core.repository.model.web.VerificationToken;
 import core.repository.service.exception.EmailExistsException;
 
 /**

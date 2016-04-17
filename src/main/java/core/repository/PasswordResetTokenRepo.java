@@ -1,7 +1,7 @@
 package core.repository;
 
-import core.repository.model.Account;
-import core.repository.model.PasswordResetToken;
+import core.repository.model.web.Account;
+import core.repository.model.web.PasswordResetToken;
 
 /**
  * Created by Adrian on 29/06/2015.

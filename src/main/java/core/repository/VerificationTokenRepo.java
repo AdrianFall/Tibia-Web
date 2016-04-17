@@ -1,7 +1,7 @@
 package core.repository;
 
-import core.repository.model.Account;
-import core.repository.model.VerificationToken;
+import core.repository.model.web.Account;
+import core.repository.model.web.VerificationToken;
 
 /**
  * Created by Adrian on 14/05/2015.

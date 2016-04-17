@@ -1,8 +1,8 @@
 package core.repository.impl.hibernate;
 
-import core.repository.model.Account;
-import core.repository.model.Role;
-import core.repository.model.Test;
+import core.repository.model.web.Account;
+import core.repository.model.web.Role;
+import core.repository.model.web.Test;
 import core.repository.AccountRepo;
 import org.hibernate.Criteria;
 import org.hibernate.Query;

@@ -49,10 +49,6 @@ public class PersistenceConfig {
     @Bean
     public DataSource crawlerDataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        /*dataSource.setDriverClassName(Preconditions.checkNotNull(env.getProperty("jdbc.driverClassName")));
-        dataSource.setUrl(Preconditions.checkNotNull(env.getProperty("jdbc.url")));
-        dataSource.setUsername(Preconditions.checkNotNull(env.getProperty("jdbc.user")));
-        dataSource.setPassword(Preconditions.checkNotNull(env.getProperty("jdbc.pass")));*/
         dataSource.setDriverClassName(env.getProperty("crawler.dataSource.driverClassName"));
         dataSource.setUrl(env.getProperty("crawler.dataSource.url"));
         dataSource.setUsername(env.getProperty("crawler.dataSource.username"));
@@ -61,24 +57,24 @@ public class PersistenceConfig {
         return dataSource;
     }
 
-    @Bean
+    @Bean(name = "sessionFactory")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan(new String[]{"core.repository.model"});
+        sessionFactory.setPackagesToScan(new String[]{"core.repository.model.web"});
         sessionFactory.setHibernateProperties(hibernateProperties());
 
         return sessionFactory;
     }
 
-    @Bean
+    @Bean(name = "crawlerSessionFactory")
     public LocalSessionFactoryBean crawlerSessionFactory() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(crawlerDataSource());
-        sessionFactory.setPackagesToScan(new String[]{"core.repository.model"});
-        sessionFactory.setHibernateProperties(hibernateProperties());
+        LocalSessionFactoryBean crawlerSessionFactory = new LocalSessionFactoryBean();
+        crawlerSessionFactory.setDataSource(crawlerDataSource());
+        crawlerSessionFactory.setPackagesToScan(new String[]{ "core.repostiory.model.crawler.servers.oldera","core.repository.model.crawler"});
+        crawlerSessionFactory.setHibernateProperties(hibernateProperties());
 
-        return sessionFactory;
+        return crawlerSessionFactory;
     }
 
 

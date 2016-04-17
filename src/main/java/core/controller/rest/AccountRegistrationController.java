@@ -1,12 +1,12 @@
 package core.controller.rest;
 
-import core.repository.model.Account;
-import core.repository.model.PasswordResetToken;
-import core.repository.model.VerificationToken;
-import core.repository.model.form.RegistrationForm;
-import core.repository.model.form.RequestResetPasswordForm;
-import core.repository.model.form.ResendEmailForm;
-import core.repository.model.form.ResetPasswordForm;
+import core.repository.model.web.Account;
+import core.repository.model.web.PasswordResetToken;
+import core.repository.model.web.VerificationToken;
+import core.repository.model.web.form.RegistrationForm;
+import core.repository.model.web.form.RequestResetPasswordForm;
+import core.repository.model.web.form.ResendEmailForm;
+import core.repository.model.web.form.ResetPasswordForm;
 import core.repository.service.AccountService;
 import core.repository.service.EmailService;
 import core.repository.service.event.OnRegistrationCompleteEvent;
@@ -29,7 +29,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.xml.ws.Response;
 import java.util.Calendar;
 
 /**

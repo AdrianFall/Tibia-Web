@@ -1,7 +1,7 @@
 package core.repository;
 
-import core.repository.model.Account;
-import core.repository.model.Test;
+import core.repository.model.web.Account;
+import core.repository.model.web.Test;
 
 /**
  * Created by Adrian on 10/05/2015.
