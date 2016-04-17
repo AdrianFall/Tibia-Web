@@ -1,14 +1,20 @@
 DROP SEQUENCE IF EXISTS hibernate_sequence;
 
 CREATE SEQUENCE hibernate_sequence
-  INCREMENT 1
-  MINVALUE 1
-  MAXVALUE 9223372036854775807
-  START 146
-  CACHE 1;
+INCREMENT 1
+MINVALUE 1
+MAXVALUE 9223372036854775807
+START 146
+CACHE 1;
 
-/*DROP TABLE IF EXISTS accounts_social_providers;*/
-/*DROP TABLE IF EXISTS social_provider;*/
+DROP TABLE IF EXISTS oldera_player_level_history;
+DROP TABLE IF EXISTS oldera_player_death;
+DROP TABLE IF EXISTS oldera_player;
+DROP TABLE IF EXISTS thronia_player_death;
+DROP TABLE IF EXISTS thronia_player;
+DROP TABLE IF EXISTS tibia_player;
+DROP TABLE IF EXISTS tibia_server;
+
 DROP TABLE IF EXISTS Test;
 /*DROP TABLE IF EXISTS UserConnection;*/
 DROP TABLE IF EXISTS persistent_logins;
@@ -43,10 +49,10 @@ INSERT INTO role(id,role) VALUES (2, 'ROLE_ADMIN');
 
 CREATE TABLE accounts_roles
 (
-	account_id bigint NOT NULL,
-	role_id bigint NOT NULL,
-	CONSTRAINT usersroles_accid_fkey FOREIGN KEY (account_id) REFERENCES account (id),
-	CONSTRAINT usersroles_roleid_fkey FOREIGN KEY (role_id) REFERENCES role (id)
+  account_id bigint NOT NULL,
+  role_id bigint NOT NULL,
+  CONSTRAINT usersroles_accid_fkey FOREIGN KEY (account_id) REFERENCES account (id),
+  CONSTRAINT usersroles_roleid_fkey FOREIGN KEY (role_id) REFERENCES role (id)
 );
 
 INSERT INTO accounts_roles(account_id, role_id) VALUES (1, 1);
@@ -107,21 +113,104 @@ create table Test (
   CONSTRAINT test_fkey FOREIGN KEY (account_id) REFERENCES account(id)
 );
 
-/*create table social_provider(
-  provider_name varchar(50) NOT NULL,
-  CONSTRAINT social_provider_pkey PRIMARY KEY (provider_name)
-);*/
+CREATE TABLE tibia_server(
+  name VARCHAR(100) NOT NULL,
+  update_interval_ms INTEGER NOT NULL,
+  /*url VARCHAR(120),*/
+  /*whoIsOnlineUrl VARCHAR(240),*/
+  is_online boolean NOT NULL DEFAULT FALSE,
+  /*lastUpdateTs TIMESTAMP,*/
+  CONSTRAINT tibia_server_pkey PRIMARY KEY (name)
+);
 
-/*INSERT INTO social_provider(provider_name) VALUES ('FACEBOOK');
-INSERT INTO social_provider(provider_name) VALUES ('LINKEDIN');
-INSERT INTO social_provider(provider_name) VALUES ('GITHUB');
-INSERT INTO social_provider(provider_name) VALUES ('GOOGLE');
-INSERT INTO social_provider(provider_name) VALUES ('PIXELPIN');*/
+CREATE TABLE tibia_player(
+  id BIGINT NOT NULL,
+  server_name VARCHAR(100) NOT NULL,
+  name VARCHAR(90) NOT NULL,
+  level INTEGER NOT NULL,
+  vocation VARCHAR(50) NOT NULL,
+  is_online boolean NOT NULL DEFAULT FALSE,
+  CONSTRAINT tibia_player_pkey PRIMARY KEY (id),
+  CONSTRAINT tibia_player_fkey FOREIGN KEY (server_name) REFERENCES tibia_server(name)
+
+);
+
+CREATE TABLE thronia_player(
+  id BIGINT NOT NULL,
+  CONSTRAINT thronia_player_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE thronia_player_death(
+  id BIGINT NOT NULL,
+  death_player_id BIGINT NOT NULL,
+  first_killer_id BIGINT,
+  second_killer_id BIGINT,
+  has_two_killers BOOLEAN NOT NULL,
+  first_killer_is_creature BOOLEAN NOT NULL,
+  second_killer_is_creature BOOLEAN NOT NULL,
+  first_killer_name VARCHAR(100) NOT NULL,
+  second_killer_name VARCHAR(100),
+  ts_death timestamp without time zone NOT NULL,
+  CONSTRAINT thronia_player_death_pkey PRIMARY KEY(id),
+  CONSTRAINT death_player_id_fkey FOREIGN KEY (death_player_id) REFERENCES thronia_player(id),
+  CONSTRAINT first_killer_fkey FOREIGN KEY (first_killer_id) REFERENCES thronia_player(id),
+  CONSTRAINT second_killer_fkey FOREIGN KEY (second_killer_id) REFERENCES thronia_player(id)
+);
+
+CREATE TABLE oldera_player(
+  id BIGINT NOT NULL,
+  CONSTRAINT oldera_player_pkey PRIMARY KEY (id),
+  CONSTRAINT oldera_player_fkey FOREIGN KEY (id) REFERENCES tibia_player(id)
+);
+
+CREATE TABLE oldera_player_death(
+  id BIGINT NOT NULL,
+  death_player_id BIGINT NOT NULL,
+  first_killer_id BIGINT,
+  second_killer_id BIGINT,
+  has_two_killers BOOLEAN NOT NULL,
+  first_killer_is_creature BOOLEAN NOT NULL,
+  second_killer_is_creature BOOLEAN NOT NULL,
+  first_killer_name VARCHAR(100) NOT NULL,
+  second_killer_name VARCHAR(100),
+  ts_death TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  CONSTRAINT oldera_player_death_pkey PRIMARY KEY(id),
+  CONSTRAINT death_player_id_fkey FOREIGN KEY (death_player_id) REFERENCES oldera_player(id),
+  CONSTRAINT first_killer_fkey FOREIGN KEY (first_killer_id) REFERENCES oldera_player(id),
+  CONSTRAINT second_killer_fkey FOREIGN KEY (second_killer_id) REFERENCES oldera_player(id)
+);
+
+CREATE TABLE oldera_player_level_history(
+  id BIGINT NOT NULL,
+  oldera_player_id BIGINT NOT NULL,
+  level INTEGER NOT NULL,
+  ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  CONSTRAINT oldera_player_level_history_pkey PRIMARY KEY (id),
+  CONSTRAINT oldera_player_level_history_fkey FOREIGN KEY (oldera_player_id) REFERENCES oldera_player(id)
+);
+
+INSERT INTO tibia_server(name,update_interval_ms,is_online) VALUES ('Thronia', 30000, false);
+INSERT INTO tibia_server(name,update_interval_ms,is_online) VALUES ('Oldera', 30000, false);
 
 /*
-create table accounts_social_providers(
-  account_id bigint NOT NULL,
-  provider_name varchar(50) NOT NULL,
-  CONSTRAINT accsocialproviders_accid_fkey FOREIGN KEY (account_id) REFERENCES account(id),
-  CONSTRAINT accsocialproviders_providername_fkey FOREIGN KEY (provider_name) REFERENCES social_provider(provider_name)
-);*/
+
+CREATE TABLE tibia_player(
+  id serial NOT NULL,
+  server_id BIGINT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  level BIGINT NOT NULL,
+  vocation VARCHAR(20) NOT NULL,
+  CONSTRAINT tibiaplayer_pkey PRIMARY KEY (id),
+  CONSTRAINT tibiaplayer_fkey FOREIGN KEY (server_id) REFERENCES tibia_server(id).o s
+
+);
+
+CREATE TABLE tibia_player_log(
+  id serial NOT NULL,
+  player_id BIGINT NOT NULL,
+  ts TIMESTAMP NOT NULL,
+  log VARCHAR(512) NOT NULL,
+  CONSTRAINT tibiaplayerlog_pkey PRIMARY KEY (id),
+  CONSTRAINT tibiaplayerlog_fkey FOREIGN KEY (player_id) REFERENCES tibia_player(id)
+);
+*/

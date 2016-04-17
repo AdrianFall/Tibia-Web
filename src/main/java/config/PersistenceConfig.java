@@ -46,37 +46,15 @@ public class PersistenceConfig {
         return dataSource;
     }
 
-    @Bean
-    public DataSource crawlerDataSource() {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("crawler.dataSource.driverClassName"));
-        dataSource.setUrl(env.getProperty("crawler.dataSource.url"));
-        dataSource.setUsername(env.getProperty("crawler.dataSource.username"));
-        dataSource.setPassword(env.getProperty("crawler.dataSource.password"));
-
-        return dataSource;
-    }
-
     @Bean(name = "sessionFactory")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan(new String[]{"core.repository.model.web"});
+        sessionFactory.setPackagesToScan(new String[]{"core.repository.model.web","core.repostiory.model.crawler.servers.oldera","core.repository.model.crawler"});
         sessionFactory.setHibernateProperties(hibernateProperties());
 
         return sessionFactory;
     }
-
-    @Bean(name = "crawlerSessionFactory")
-    public LocalSessionFactoryBean crawlerSessionFactory() {
-        LocalSessionFactoryBean crawlerSessionFactory = new LocalSessionFactoryBean();
-        crawlerSessionFactory.setDataSource(crawlerDataSource());
-        crawlerSessionFactory.setPackagesToScan(new String[]{ "core.repostiory.model.crawler.servers.oldera","core.repository.model.crawler"});
-        crawlerSessionFactory.setHibernateProperties(hibernateProperties());
-
-        return crawlerSessionFactory;
-    }
-
 
     @Bean
     @Autowired
