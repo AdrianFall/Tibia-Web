@@ -20,13 +20,12 @@ import java.util.List;
 public class OlderaCrawlerRepoImpl implements OlderaCrawlerRepo {
 
     @Autowired
-    @Qualifier(value="crawlerSessionFactory")
-    SessionFactory crawlerSessionFactory;
+    SessionFactory sessionFactory;
 
 
     @Override
     public List<OlderaPlayer> getOnlinePlayers() {
-        List<OlderaPlayer> onlinePlayers = (List<OlderaPlayer>) crawlerSessionFactory.getCurrentSession()
+        List<OlderaPlayer> onlinePlayers = (List<OlderaPlayer>) sessionFactory.getCurrentSession()
                 .createCriteria(OlderaPlayer.class)
                 .add(Restrictions.eq("isOnline", true))
                 .list();
