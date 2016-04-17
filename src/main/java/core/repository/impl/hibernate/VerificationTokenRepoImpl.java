@@ -1,7 +1,7 @@
 package core.repository.impl.hibernate;
 
-import core.repository.model.Account;
-import core.repository.model.VerificationToken;
+import core.repository.model.web.Account;
+import core.repository.model.web.VerificationToken;
 import core.repository.VerificationTokenRepo;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;

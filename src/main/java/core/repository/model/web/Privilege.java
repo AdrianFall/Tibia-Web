@@ -1,4 +1,4 @@
-package core.repository.model;
+package core.repository.model.web;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

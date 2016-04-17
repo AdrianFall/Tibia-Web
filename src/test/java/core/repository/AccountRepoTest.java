@@ -3,7 +3,7 @@ package core.repository;
 import config.PersistenceConfig;
 import config.SpringConfig;
 import config.WebSecurityConfig;
-import core.repository.model.Account;
+import core.repository.model.web.Account;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

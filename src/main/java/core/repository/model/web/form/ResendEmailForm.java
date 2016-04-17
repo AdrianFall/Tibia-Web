@@ -1,4 +1,4 @@
-package core.repository.model.form;
+package core.repository.model.web.form;
 
 import javax.validation.constraints.Pattern;
 

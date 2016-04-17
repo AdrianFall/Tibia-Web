@@ -34,7 +34,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Spring-Rest-Template" target="1.7" />
-      <module name="Tibia-Web" target="1.7" />
+      <module name="Tibia-Web" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

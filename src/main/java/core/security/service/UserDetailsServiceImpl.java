@@ -1,8 +1,8 @@
 package core.security.service;
 
 import core.repository.AccountRepo;
-import core.repository.model.Account;
-import core.repository.model.Role;
+import core.repository.model.web.Account;
+import core.repository.model.web.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

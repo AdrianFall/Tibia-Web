@@ -1,7 +1,7 @@
 package core.repository.impl.hibernate;
 
-import core.repository.model.Account;
-import core.repository.model.PasswordResetToken;
+import core.repository.model.web.Account;
+import core.repository.model.web.PasswordResetToken;
 import core.repository.PasswordResetTokenRepo;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
