@@ -1,0 +1,8 @@
+account_tibia_server_permissions
+id, tibia_server_name(fkey), account_id(fkey) <- composed
+
+
+user -> specific server -> hunted list for that server
+
+account_tibia_server_hunted_list
+hunted_player_id (fkey), account_tibia_server_permission_id (fkey)
