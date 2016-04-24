@@ -26,6 +26,7 @@ public class OlderaCrawlerRepoImpl implements OlderaCrawlerRepo {
     SessionFactory sessionFactory;
 
 
+    @Deprecated
     @Override
     public List<OlderaPlayer> getOnlinePlayers() {
         ProjectionList p = Projections.projectionList();

@@ -1,6 +1,7 @@
 package core.repository.model.crawler.servers.oldera;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import core.repository.model.crawler.TibiaPlayer;
 
 import javax.persistence.*;
@@ -16,12 +17,14 @@ public class OlderaPlayer extends TibiaPlayer {
 
     // Vars
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "oldera_player_death",
             joinColumns = {@JoinColumn(name= "death_player_id")},
             inverseJoinColumns = {@JoinColumn(name = "id")})
     List<OlderaPlayerDeath> olderaPlayerDeathList = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "oldera_player_level_history",
             joinColumns = {@JoinColumn(name= "oldera_player_id")},

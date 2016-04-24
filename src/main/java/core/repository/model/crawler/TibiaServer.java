@@ -41,6 +41,7 @@ public class TibiaServer {
         this.isOnline = isOnline;
     }
 
+
     public String getName() {
         return name;
     }

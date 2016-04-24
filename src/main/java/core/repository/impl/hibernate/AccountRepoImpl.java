@@ -73,30 +73,6 @@ public class AccountRepoImpl implements AccountRepo {
 
     @Override
     public Account createAccount(Account acc) {
-        /*// Find the user role
-        Query query = emgr.createQuery("SELECT r FROM Role r WHERE r.role = :role");
-        query.setParameter("role", "ROLE_USER");
-
-        if (query.getResultList().isEmpty())
-            return null;
-
-        Role role = (Role) query.getResultList().get(0);
-
-        // Create new account roles obj
-        Set<Role> accRoles = new HashSet<Role>();
-        accRoles.add(role);
-        acc.setAccRoles(accRoles);
-
-        emgr.persist(acc);
-        emgr.flush();
-
-        // Attach the role to the acc obj
-       *//* Set<Role> roles = new HashSet<Role>(0);
-        roles.add(role);
-        acc.setRoles(roles);*//*
-
-        return acc;*/
-
         // Find the user role
         Role role = (Role) sessionFactory.getCurrentSession()
                 .createCriteria(Role.class)

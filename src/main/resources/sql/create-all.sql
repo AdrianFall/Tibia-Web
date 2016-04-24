@@ -7,6 +7,8 @@ MAXVALUE 9223372036854775807
 START 146
 CACHE 1;
 
+DROP TABLE IF EXISTS tibia_hunted_player;
+
 DROP TABLE IF EXISTS oldera_player_level_history;
 DROP TABLE IF EXISTS oldera_player_death;
 DROP TABLE IF EXISTS oldera_player;
@@ -137,7 +139,8 @@ CREATE TABLE tibia_player(
 
 CREATE TABLE thronia_player(
   id BIGINT NOT NULL,
-  CONSTRAINT thronia_player_pkey PRIMARY KEY (id)
+  CONSTRAINT thronia_player_pkey PRIMARY KEY (id),
+  CONSTRAINT thronia_player_fkey FOREIGN KEY (id) REFERENCES tibia_player(id)
 );
 
 CREATE TABLE thronia_player_death(
@@ -187,6 +190,17 @@ CREATE TABLE oldera_player_level_history(
   ts TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   CONSTRAINT oldera_player_level_history_pkey PRIMARY KEY (id),
   CONSTRAINT oldera_player_level_history_fkey FOREIGN KEY (oldera_player_id) REFERENCES oldera_player(id)
+);
+
+CREATE TABLE tibia_hunted_player(
+  id BIGINT NOT NULL,
+  account_id BIGINT NOT NULL,
+  tibia_server_name VARCHAR(100) NOT NULL,
+  tibia_player_id BIGINT NOT NULL,
+  CONSTRAINT tibia_hunted_player_pkey PRIMARY KEY (id),
+  CONSTRAINT tibia_hunted_player_fkey FOREIGN KEY (account_id) REFERENCES account(id),
+  CONSTRAINT tibia_hunted_player_fkey2 FOREIGN KEY (tibia_server_name) REFERENCES tibia_server(name),
+  CONSTRAINT tibia_hunted_player_fkey3 FOREIGN KEY (tibia_player_id) REFERENCES tibia_player(id)
 );
 
 INSERT INTO tibia_server(name,update_interval_ms,is_online) VALUES ('Thronia', 30000, false);
