@@ -91,4 +91,15 @@ public class CrawlerServiceImpl implements CrawlerService {
         return crawlerRepo.getOlderaHuntedList(acc.getId(), "Oldera");
 
     }
+
+    @Override
+    public List<ThroniaPlayer> getThroniaHuntedList(String accountEmail) throws AccountDoesNotExistException {
+        Account acc = accountRepo.findAccountByEmail(accountEmail);
+
+        if (acc == null) {
+            throw new AccountDoesNotExistException("Account does not exist");
+        }
+
+        return crawlerRepo.getThroniaHuntedList(acc.getId(), "Thronia");
+    }
 }

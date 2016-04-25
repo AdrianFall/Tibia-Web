@@ -18,4 +18,6 @@ public interface CrawlerService {
     public ThroniaPlayer addToThroniaHuntedList(String playerName, String accountEmail) throws PlayerExistsInHuntedListException, PlayerDoesNotExistException, AccountDoesNotExistException;
 
     List<OlderaPlayer> getOlderaHuntedList(String accountEmail) throws AccountDoesNotExistException;
+
+    List<ThroniaPlayer> getThroniaHuntedList(String accountEmail) throws AccountDoesNotExistException;
 }

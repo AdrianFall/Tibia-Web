@@ -105,6 +105,31 @@ public class CrawlerController {
         /*return ResponseEntity.ok().body("");*/
     }
 
+    @RequestMapping(value = "/thronia/getHuntedList", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> throniaHuntedList(Principal user, HttpServletRequest request) {
+        JSONArray jsonHuntedList = new JSONArray();
+
+        try {
+            List<ThroniaPlayer> huntedList = crawlerService.getThroniaHuntedList(user.getName());
+            huntedList.forEach(e -> {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("name", e.getName());
+                jsonObject.put("level", e.getLevel());
+                jsonObject.put("vocation", e.getVocation());
+                jsonObject.put("id", e.getId());
+                jsonObject.put("isOnline", e.isOnline());
+                jsonHuntedList.add(jsonObject);
+            });
+
+            return ResponseEntity.ok().body(jsonHuntedList.toJSONString());
+        } catch (AccountDoesNotExistException e) {
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("error", e.getMessage());
+            return ResponseEntity.status(401).body(responseJson.toJSONString());
+        }
+        /*return ResponseEntity.ok().body("");*/
+    }
+
     @RequestMapping(value = "/oldera/addToHuntedList", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addToOlderaHuntedList(Principal user, @Valid @RequestBody HuntedPlayerForm huntedPlayerForm, BindingResult bResult, HttpServletRequest request, WebRequest webRequest) {
 

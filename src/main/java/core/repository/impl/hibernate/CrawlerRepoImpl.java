@@ -229,4 +229,25 @@ public class CrawlerRepoImpl implements CrawlerRepo {
         }
         return null;
     }
+
+    @Override
+    public List<ThroniaPlayer> getThroniaHuntedList(Long accountId, String serverName) {
+        List<TibiaHuntedPlayer> tibiaHuntedPlayers = sessionFactory.getCurrentSession()
+                .createCriteria(TibiaHuntedPlayer.class)
+                .add(Restrictions.eq("accountId", accountId))
+                .add(Restrictions.eq("tibiaServerName", serverName))
+                .list();
+
+        if (tibiaHuntedPlayers != null) {
+            List<ThroniaPlayer> throniaPlayers = new ArrayList<>();
+            tibiaHuntedPlayers.forEach(e -> {
+                ThroniaPlayer throniaPlayer = findThroniaHuntedPlayer(e.getTibiaPlayerId(), accountId);
+                if (throniaPlayer != null) {
+                    throniaPlayers.add(throniaPlayer);
+                }
+            });
+            return throniaPlayers;
+        }
+        return null;
+    }
 }

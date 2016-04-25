@@ -25,4 +25,5 @@ public interface CrawlerRepo {
     public boolean removeFromThroniaHuntedList(Long playerId, Long accountId);
 
     List<OlderaPlayer> getOlderaHuntedList(Long accountId, String serverName);
+    List<ThroniaPlayer> getThroniaHuntedList(Long accountId, String serverName);
 }
