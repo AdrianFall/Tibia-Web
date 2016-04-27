@@ -48,38 +48,11 @@ public class CrawlerController {
             jsonObject.put("vocation", e.getVocation());
             jsonOnlinePlayers.add(jsonObject);
         });
-
-        /*
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonString = null;
-        try {
-            jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(crawlerService.getOnlineOlderaPlayers());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }*/
-
         return jsonOnlinePlayers.toJSONString();
 
     }
 
-    /*@RequestMapping(value = "/thronia/onlinePlayers", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    String throniaOnlinePlayers() {
 
-        JSONArray jsonOnlinePlayers = new JSONArray();
-
-        List<ThroniaPlayer> onlinePlayers = crawlerService.getOnlineThroniaPlayers();
-        onlinePlayers.forEach(e -> {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name", e.getName());
-            jsonObject.put("level", e.getLevel());
-            jsonObject.put("vocation", e.getVocation());
-            jsonOnlinePlayers.add(jsonObject);
-        });
-        return jsonOnlinePlayers.toJSONString();
-
-    }*/
 
     @RequestMapping(value = "/{server}/getHuntedList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getHuntedList(@PathVariable("server") String serverName, Principal user, HttpServletRequest request) {
@@ -106,38 +79,13 @@ public class CrawlerController {
         /*return ResponseEntity.ok().body("");*/
     }
 
-    /*@RequestMapping(value = "/thronia/getHuntedList", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> throniaHuntedList(Principal user, HttpServletRequest request) {
-        JSONArray jsonHuntedList = new JSONArray();
-
-        try {
-            List<ThroniaPlayer> huntedList = crawlerService.getThroniaHuntedList(user.getName());
-            huntedList.forEach(e -> {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("name", e.getName());
-                jsonObject.put("level", e.getLevel());
-                jsonObject.put("vocation", e.getVocation());
-                jsonObject.put("id", e.getId());
-                jsonObject.put("isOnline", e.isOnline());
-                jsonHuntedList.add(jsonObject);
-            });
-
-            return ResponseEntity.ok().body(jsonHuntedList.toJSONString());
-        } catch (AccountDoesNotExistException e) {
-            JSONObject responseJson = new JSONObject();
-            responseJson.put("error", e.getMessage());
-            return ResponseEntity.status(401).body(responseJson.toJSONString());
-        }
-        *//*return ResponseEntity.ok().body("");*//*
-    }*/
-
-    @RequestMapping(value = "/oldera/addToHuntedList", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addToOlderaHuntedList(Principal user, @Valid @RequestBody HuntedPlayerForm huntedPlayerForm, BindingResult bResult, HttpServletRequest request, WebRequest webRequest) {
+    @RequestMapping(value = "/{server}/addToHuntedList", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> addToHuntedList(@PathVariable("server") String serverName, Principal user, @Valid @RequestBody HuntedPlayerForm huntedPlayerForm, BindingResult bResult, HttpServletRequest request, WebRequest webRequest) {
 
         JSONObject responseJson = new JSONObject();
 
         try {
-            OlderaPlayer addedPlayer = crawlerService.addToOlderaHuntedList(huntedPlayerForm.getPlayerName(), user.getName());
+            TibiaPlayer addedPlayer = crawlerService.addToHuntedList(huntedPlayerForm.getPlayerName(), user.getName(), serverName);
             if (addedPlayer != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonString = null;
@@ -161,31 +109,6 @@ public class CrawlerController {
 
         responseJson.put("error", "Unknown Error, please try again soon");
         responseJson.put("status", 520);
-        return ResponseEntity.status(520).body(responseJson.toJSONString());
-    }
-
-    @RequestMapping(value = "/thronia/addToHuntedList", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addToThroniaHuntedList(Principal user, @Valid @RequestBody HuntedPlayerForm huntedPlayerForm, BindingResult bResult, HttpServletRequest request, WebRequest webRequest) {
-
-        JSONObject responseJson = new JSONObject();
-
-        try {
-            ThroniaPlayer addedPlayer = crawlerService.addToThroniaHuntedList(huntedPlayerForm.getPlayerName(), user.getName());
-            if (addedPlayer != null) {
-                responseJson.put("player", addedPlayer);
-                return ResponseEntity.ok(responseJson.toJSONString());
-            }
-        } catch (PlayerExistsInHuntedListException e) {
-            responseJson.put("error", e.getMessage());
-            return ResponseEntity.status(400).body(responseJson.toJSONString());
-        } catch (PlayerDoesNotExistException e) {
-            e.printStackTrace();
-        } catch (AccountDoesNotExistException e) {
-            responseJson.put("error", e.getMessage());
-            return ResponseEntity.status(401).body(responseJson.toJSONString());
-        }
-
-
         return ResponseEntity.status(520).body(responseJson.toJSONString());
     }
 }

@@ -13,14 +13,7 @@ import java.util.List;
  * Created by Adrian on 17/04/2016.
  */
 public interface CrawlerService {
-    public List<OlderaPlayer> getOnlineOlderaPlayers();
-    public List<ThroniaPlayer> getOnlineThroniaPlayers();
-    public OlderaPlayer  addToOlderaHuntedList(String playerName, String accountEmail) throws PlayerExistsInHuntedListException, PlayerDoesNotExistException, AccountDoesNotExistException;
-    public ThroniaPlayer addToThroniaHuntedList(String playerName, String accountEmail) throws PlayerExistsInHuntedListException, PlayerDoesNotExistException, AccountDoesNotExistException;
-
-    List<OlderaPlayer> getOlderaHuntedList(String accountEmail) throws AccountDoesNotExistException;
-
-    List<ThroniaPlayer> getThroniaHuntedList(String accountEmail) throws AccountDoesNotExistException;
+    TibiaPlayer addToHuntedList(String playerName, String accountEmail, String serverName) throws PlayerExistsInHuntedListException, PlayerDoesNotExistException, AccountDoesNotExistException;
 
     List<TibiaPlayer> getOnlinePlayers(String serverName);
 

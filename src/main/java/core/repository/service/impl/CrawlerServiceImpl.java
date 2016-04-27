@@ -30,24 +30,14 @@ public class CrawlerServiceImpl implements CrawlerService {
     AccountRepo accountRepo;
 
     @Override
-    public List<OlderaPlayer> getOnlineOlderaPlayers() {
-        return crawlerRepo.getOlderaOnlinePlayers();
-    }
-
-    @Override
     public List<TibiaPlayer> getOnlinePlayers(String serverName) {
         return crawlerRepo.getOnlinePlayers(serverName.substring(0, 1).toUpperCase() + serverName.substring(1));
     }
 
     @Override
-    public List<ThroniaPlayer> getOnlineThroniaPlayers() {
-        return crawlerRepo.getThroniaOnlinePlayers();
-    }
-
-    @Override
-    public OlderaPlayer addToOlderaHuntedList(String playerName, String accountEmail) throws PlayerExistsInHuntedListException, PlayerDoesNotExistException, AccountDoesNotExistException {
+    public TibiaPlayer addToHuntedList(String playerName, String accountEmail, String serverName) throws PlayerExistsInHuntedListException, PlayerDoesNotExistException, AccountDoesNotExistException {
         // Find player in the database
-        TibiaPlayer player = crawlerRepo.findTibiaPlayer(playerName, "Oldera");
+        TibiaPlayer player = crawlerRepo.findTibiaPlayer(playerName, serverName.substring(0, 1).toUpperCase() + serverName.substring(1));
         if (player == null) {
             throw new PlayerDoesNotExistException("Player does not exist.");
         }
@@ -57,11 +47,12 @@ public class CrawlerServiceImpl implements CrawlerService {
             throw new AccountDoesNotExistException("Account does not exist");
         }
 
-        if (crawlerRepo.findOlderaHuntedPlayer(player.getId(), acc.getId()) != null) {
+        if (crawlerRepo.findHuntedPlayer(player.getId(), acc.getId(), serverName) != null) {
             throw new PlayerExistsInHuntedListException("Player already exists");
         }
-        return crawlerRepo.addToOlderaHuntedList(player.getId(), acc.getId());
+        return crawlerRepo.addToHuntedList(player.getId(), acc.getId(), serverName.substring(0, 1).toUpperCase() + serverName.substring(1));
     }
+
 
     @Override
     public List<TibiaPlayer> getHuntedList(String accountEmail, String serverName) throws AccountDoesNotExistException {
@@ -73,51 +64,5 @@ public class CrawlerServiceImpl implements CrawlerService {
 
         return crawlerRepo.getHuntedList(acc.getId(), serverName.substring(0, 1).toUpperCase() + serverName.substring(1));
     }
-
-    @Override
-    public ThroniaPlayer addToThroniaHuntedList(String playerName, String accountEmail) throws PlayerExistsInHuntedListException, PlayerDoesNotExistException, AccountDoesNotExistException {
-        // Find player in the database
-        TibiaPlayer player = crawlerRepo.findTibiaPlayer(playerName, "Thronia");
-        if (player == null) {
-            throw new PlayerDoesNotExistException("Player does not exist.");
-        }
-
-        Account acc = accountRepo.findAccountByEmail(accountEmail);
-
-        if (acc == null) {
-            throw new AccountDoesNotExistException("Account does not exist");
-        }
-
-        if (crawlerRepo.findThroniaHuntedPlayer(player.getId(), acc.getId()) != null) {
-            throw new PlayerExistsInHuntedListException("Player already exists");
-        }
-
-        return crawlerRepo.addToThroniaHuntedList(player.getId(), acc.getId());
-    }
-
-    @Override
-    public List<OlderaPlayer> getOlderaHuntedList(String accountEmail) throws AccountDoesNotExistException {
-
-        Account acc = accountRepo.findAccountByEmail(accountEmail);
-
-        if (acc == null) {
-            throw new AccountDoesNotExistException("Account does not exist");
-        }
-
-        return crawlerRepo.getOlderaHuntedList(acc.getId(), "Oldera");
-
-    }
-
-    @Override
-    public List<ThroniaPlayer> getThroniaHuntedList(String accountEmail) throws AccountDoesNotExistException {
-        Account acc = accountRepo.findAccountByEmail(accountEmail);
-
-        if (acc == null) {
-            throw new AccountDoesNotExistException("Account does not exist");
-        }
-
-        return crawlerRepo.getThroniaHuntedList(acc.getId(), "Thronia");
-    }
-
 
 }
