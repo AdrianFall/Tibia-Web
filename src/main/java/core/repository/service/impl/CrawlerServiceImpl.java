@@ -35,6 +35,11 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
+    public List<TibiaPlayer> getOnlinePlayers(String serverName) {
+        return crawlerRepo.getOnlinePlayers(serverName.substring(0, 1).toUpperCase() + serverName.substring(1));
+    }
+
+    @Override
     public List<ThroniaPlayer> getOnlineThroniaPlayers() {
         return crawlerRepo.getThroniaOnlinePlayers();
     }
@@ -56,6 +61,17 @@ public class CrawlerServiceImpl implements CrawlerService {
             throw new PlayerExistsInHuntedListException("Player already exists");
         }
         return crawlerRepo.addToOlderaHuntedList(player.getId(), acc.getId());
+    }
+
+    @Override
+    public List<TibiaPlayer> getHuntedList(String accountEmail, String serverName) throws AccountDoesNotExistException {
+        Account acc = accountRepo.findAccountByEmail(accountEmail);
+
+        if (acc == null) {
+            throw new AccountDoesNotExistException("Account does not exist");
+        }
+
+        return crawlerRepo.getHuntedList(acc.getId(), serverName.substring(0, 1).toUpperCase() + serverName.substring(1));
     }
 
     @Override
@@ -102,4 +118,6 @@ public class CrawlerServiceImpl implements CrawlerService {
 
         return crawlerRepo.getThroniaHuntedList(acc.getId(), "Thronia");
     }
+
+
 }

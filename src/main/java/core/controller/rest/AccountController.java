@@ -34,11 +34,11 @@ public class AccountController {
         return jsonObject.toString();
     }
 
-    @Deprecated
+    /*@Deprecated
     @RequestMapping(value = "/deleteAll", method = RequestMethod.GET, produces = "application/json")
     public String deleteAllAccounts() {
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("deleted", (accountService.deleteAllAccounts()) ? true : false);
         return jsonResponse.toString();
-    }
+    }*/
 }

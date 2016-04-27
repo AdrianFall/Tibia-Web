@@ -2,6 +2,7 @@ package core.controller.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import core.repository.model.crawler.TibiaPlayer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
 import core.repository.model.web.form.HuntedPlayerForm;
@@ -32,14 +33,14 @@ public class CrawlerController {
     @Autowired
     CrawlerService crawlerService;
 
-    @RequestMapping(value = "/oldera/onlinePlayers", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    String olderaOnlinePlayers() {
+    @RequestMapping(value = "/{server}/onlinePlayers", method = RequestMethod.GET)
+    public @ResponseBody String getOnlinePlayers(@PathVariable("server") String serverName) {
 
         JSONArray jsonOnlinePlayers = new JSONArray();
 
-        List<OlderaPlayer> onlinePlayers = crawlerService.getOnlineOlderaPlayers();
+        List<TibiaPlayer> onlinePlayers = crawlerService.getOnlinePlayers(serverName);
+
+//        List<OlderaPlayer> onlinePlayers = crawlerService.getOnlineOlderaPlayers();
         onlinePlayers.forEach(e -> {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", e.getName());
@@ -61,7 +62,7 @@ public class CrawlerController {
 
     }
 
-    @RequestMapping(value = "/thronia/onlinePlayers", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/thronia/onlinePlayers", method = RequestMethod.GET)
     public
     @ResponseBody
     String throniaOnlinePlayers() {
@@ -78,14 +79,14 @@ public class CrawlerController {
         });
         return jsonOnlinePlayers.toJSONString();
 
-    }
+    }*/
 
-    @RequestMapping(value = "/oldera/getHuntedList", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> olderaHuntedList(Principal user, HttpServletRequest request) {
+    @RequestMapping(value = "/{server}/getHuntedList", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> getHuntedList(@PathVariable("server") String serverName, Principal user, HttpServletRequest request) {
         JSONArray jsonHuntedList = new JSONArray();
 
         try {
-            List<OlderaPlayer> huntedList = crawlerService.getOlderaHuntedList(user.getName());
+            List<TibiaPlayer> huntedList = crawlerService.getHuntedList(user.getName(), serverName);
             huntedList.forEach(e -> {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("name", e.getName());
@@ -105,7 +106,7 @@ public class CrawlerController {
         /*return ResponseEntity.ok().body("");*/
     }
 
-    @RequestMapping(value = "/thronia/getHuntedList", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/thronia/getHuntedList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> throniaHuntedList(Principal user, HttpServletRequest request) {
         JSONArray jsonHuntedList = new JSONArray();
 
@@ -127,8 +128,8 @@ public class CrawlerController {
             responseJson.put("error", e.getMessage());
             return ResponseEntity.status(401).body(responseJson.toJSONString());
         }
-        /*return ResponseEntity.ok().body("");*/
-    }
+        *//*return ResponseEntity.ok().body("");*//*
+    }*/
 
     @RequestMapping(value = "/oldera/addToHuntedList", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addToOlderaHuntedList(Principal user, @Valid @RequestBody HuntedPlayerForm huntedPlayerForm, BindingResult bResult, HttpServletRequest request, WebRequest webRequest) {

@@ -33,6 +33,39 @@ public class CrawlerRepoImpl implements CrawlerRepo {
     AccountRepo accountRepo;
 
     @Override
+    public List<TibiaPlayer> getOnlinePlayers(String serverName) {
+        ProjectionList p = Projections.projectionList();
+        p.add(Projections.property("name"));
+        p.add(Projections.property("level"));
+        p.add(Projections.property("vocation"));
+        // p.add(Projections.property("id"));
+        //p.add(Projections.property("server_name"));
+        //p.add(Projections.property("server_name"));
+
+        List<Object[]> onlinePlayersArray = (List<Object[]>) sessionFactory.getCurrentSession()
+                .createCriteria(TibiaPlayer.class)
+                .add(Restrictions.eq("isOnline", true))
+                .add(Restrictions.eq("server.name", serverName))
+                .setProjection(Projections.distinct(p))
+                .list();
+
+        List<TibiaPlayer> onlinePlayers = new ArrayList<>();
+
+        onlinePlayersArray.forEach(e -> {
+            TibiaPlayer player = new TibiaPlayer();
+            player.setName((String) e[0]);
+            player.setLevel((Integer) e[1]);
+            player.setVocation((String) e[2]);
+            onlinePlayers.add(player);
+        });
+
+
+        return onlinePlayers;
+    }
+
+
+
+    @Override
     public List<OlderaPlayer> getOlderaOnlinePlayers() {
         ProjectionList p = Projections.projectionList();
         p.add(Projections.property("name"));
@@ -104,6 +137,29 @@ public class CrawlerRepoImpl implements CrawlerRepo {
                 .uniqueResult();
 
         return tibiaPlayer;
+    }
+
+    @Override
+    public TibiaPlayer findHuntedPlayer(Long playerId, Long accountId, String serverName) {
+        TibiaHuntedPlayer huntedPlayer = (TibiaHuntedPlayer) sessionFactory.getCurrentSession()
+                .createCriteria(TibiaHuntedPlayer.class)
+                .add(Restrictions.eq("accountId", accountId))
+                .add(Restrictions.eq("tibiaServerName", serverName))
+                .add(Restrictions.eq("tibiaPlayerId", playerId))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .uniqueResult();
+
+        if (huntedPlayer != null) {
+            TibiaPlayer tibiaPlayer = (TibiaPlayer) sessionFactory.getCurrentSession()
+                    .createCriteria(TibiaPlayer.class)
+                    .add(Restrictions.eq("id", playerId))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .uniqueResult();
+            return tibiaPlayer;
+        }
+
+
+        return null;
     }
 
     @Override
@@ -207,6 +263,27 @@ public class CrawlerRepoImpl implements CrawlerRepo {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<TibiaPlayer> getHuntedList(Long accountId, String serverName) {
+        List<TibiaHuntedPlayer> tibiaHuntedPlayers = sessionFactory.getCurrentSession()
+                .createCriteria(TibiaHuntedPlayer.class)
+                .add(Restrictions.eq("accountId", accountId))
+                .add(Restrictions.eq("tibiaServerName", serverName))
+                .list();
+
+        if (tibiaHuntedPlayers != null) {
+            List<TibiaPlayer> tibiaPlayers = new ArrayList<>();
+            tibiaHuntedPlayers.forEach(e -> {
+                TibiaPlayer tibiaPlayer = findHuntedPlayer(e.getTibiaPlayerId(), accountId, serverName);
+                if (tibiaPlayer != null) {
+                    tibiaPlayers.add(tibiaPlayer);
+                }
+            });
+            return tibiaPlayers;
+        }
+        return null;
     }
 
     @Override

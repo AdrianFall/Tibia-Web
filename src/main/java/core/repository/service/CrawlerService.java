@@ -1,5 +1,6 @@
 package core.repository.service;
 
+import core.repository.model.crawler.TibiaPlayer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
 import core.repository.service.exception.AccountDoesNotExistException;
@@ -20,4 +21,8 @@ public interface CrawlerService {
     List<OlderaPlayer> getOlderaHuntedList(String accountEmail) throws AccountDoesNotExistException;
 
     List<ThroniaPlayer> getThroniaHuntedList(String accountEmail) throws AccountDoesNotExistException;
+
+    List<TibiaPlayer> getOnlinePlayers(String serverName);
+
+    List<TibiaPlayer> getHuntedList(String accountEmail, String serverName) throws AccountDoesNotExistException;
 }
