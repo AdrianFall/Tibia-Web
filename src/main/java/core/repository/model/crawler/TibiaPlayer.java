@@ -46,6 +46,10 @@ public class TibiaPlayer {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public int getLevel() {
         return level;
     }
@@ -85,4 +89,6 @@ public class TibiaPlayer {
     public void setIsOnline(boolean isOnline) {
         this.isOnline = isOnline;
     }
+
+
 }

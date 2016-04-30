@@ -52,6 +52,19 @@ public class CrawlerController {
 
     }
 
+    @RequestMapping(value = "/{server}/removeHuntedPlayers", method = RequestMethod.POST)
+    public ResponseEntity<String> removeHuntedPlayers(@RequestParam("huntedPlayerIds") String huntedPlayerIds) {
+
+        JSONObject responseJson = new JSONObject();
+
+        String[] huntedPlayersIdsArr = huntedPlayerIds.split(",");
+
+        crawlerService.removeHuntedPlayers(huntedPlayersIdsArr);
+
+        responseJson.put("error", "Unknown Error, please try again soon");
+        responseJson.put("status", 520);
+        return ResponseEntity.status(520).body(responseJson.toJSONString());
+    }
 
 
     @RequestMapping(value = "/{server}/getHuntedList", method = RequestMethod.GET)

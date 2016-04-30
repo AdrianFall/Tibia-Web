@@ -19,15 +19,19 @@ public class TibiaHuntedPlayer {
     @Column(name = "tibia_server_name")
     String tibiaServerName;
 
-    @Column(name = "tibia_player_id")
-    Long tibiaPlayerId;
+/*    @Column(name = "tibia_player_id")
+    Long tibiaPlayerId;*/
 
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "tibia_player_id")
+    TibiaPlayer tibiaPlayer;
 
     public TibiaHuntedPlayer() {}
 
     public TibiaHuntedPlayer(Long accountId, String tibiaServerName, Long tibiaPlayerId) {
         this.accountId = accountId;
-        this.tibiaPlayerId = tibiaPlayerId;
+        tibiaPlayer = new TibiaPlayer();
+        tibiaPlayer.setId(tibiaPlayerId);
         this.tibiaServerName = tibiaServerName;
     }
 
@@ -47,19 +51,20 @@ public class TibiaHuntedPlayer {
         this.accountId = accountId;
     }
 
-    public Long getTibiaPlayerId() {
-        return tibiaPlayerId;
-    }
-
-    public void setTibiaPlayerId(Long tibiaPlayerId) {
-        this.tibiaPlayerId = tibiaPlayerId;
-    }
-
     public String getTibiaServerName() {
         return tibiaServerName;
     }
 
     public void setTibiaServerName(String tibiaServerName) {
         this.tibiaServerName = tibiaServerName;
+    }
+
+
+    public TibiaPlayer getTibiaPlayer() {
+        return tibiaPlayer;
+    }
+
+    public void setTibiaPlayer(TibiaPlayer tibiaPlayer) {
+        this.tibiaPlayer = tibiaPlayer;
     }
 }

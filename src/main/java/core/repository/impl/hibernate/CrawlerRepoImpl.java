@@ -82,7 +82,7 @@ public class CrawlerRepoImpl implements CrawlerRepo {
                 .createCriteria(TibiaHuntedPlayer.class)
                 .add(Restrictions.eq("accountId", accountId))
                 .add(Restrictions.eq("tibiaServerName", serverName))
-                .add(Restrictions.eq("tibiaPlayerId", playerId))
+                .add(Restrictions.eq("tibiaPlayer.id", playerId))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .uniqueResult();
 
@@ -98,6 +98,29 @@ public class CrawlerRepoImpl implements CrawlerRepo {
 
         return null;
     }
+
+    @Override
+    public TibiaHuntedPlayer findHuntedPlayer(Long accountId, String huntedPlayerName, String serverName) {
+        return null;
+    }
+
+    @Override
+    public TibiaHuntedPlayer findHuntedPlayer(Long huntedPlayerId) {
+        TibiaHuntedPlayer huntedPlayer = (TibiaHuntedPlayer) sessionFactory.getCurrentSession()
+                .createCriteria(TibiaHuntedPlayer.class)
+                .add(Restrictions.eq("id", huntedPlayerId))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .uniqueResult();
+
+        return huntedPlayer;
+    }
+
+    @Override
+    public void removeHuntedPlayer(TibiaHuntedPlayer huntedPlayer) {
+        sessionFactory.getCurrentSession().delete(huntedPlayer);
+    }
+
+
 
     @Override
     public TibiaPlayer addToHuntedList(Long playerId, Long accountId, String serverName) {
@@ -157,7 +180,7 @@ public class CrawlerRepoImpl implements CrawlerRepo {
         if (tibiaHuntedPlayers != null) {
             List<TibiaPlayer> tibiaPlayers = new ArrayList<>();
             tibiaHuntedPlayers.forEach(e -> {
-                TibiaPlayer tibiaPlayer = findHuntedPlayer(e.getTibiaPlayerId(), accountId, serverName);
+                TibiaPlayer tibiaPlayer = findHuntedPlayer(e.getTibiaPlayer().getId(), accountId, serverName);
                 if (tibiaPlayer != null) {
                     tibiaPlayers.add(tibiaPlayer);
                 }

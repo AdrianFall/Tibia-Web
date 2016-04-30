@@ -1,5 +1,6 @@
 package core.repository;
 
+import core.repository.model.crawler.TibiaHuntedPlayer;
 import core.repository.model.crawler.TibiaPlayer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
@@ -24,4 +25,9 @@ public interface CrawlerRepo {
     List<TibiaPlayer> getHuntedList(Long accountId, String serverName);
 
     TibiaPlayer findHuntedPlayer(Long playerId, Long accountId, String serverName);
+    TibiaHuntedPlayer findHuntedPlayer(Long huntedPlayerId);
+
+    void removeHuntedPlayer(TibiaHuntedPlayer huntedPlayer);
+
+    TibiaHuntedPlayer findHuntedPlayer(Long accountId, String huntedPlayerName, String serverName);
 }

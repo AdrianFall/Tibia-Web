@@ -2,9 +2,11 @@ package core.repository.service.impl;
 
 import core.repository.AccountRepo;
 import core.repository.CrawlerRepo;
+import core.repository.model.crawler.TibiaHuntedPlayer;
 import core.repository.model.crawler.TibiaPlayer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
+import core.repository.model.dto.HuntedPlayerDTO;
 import core.repository.model.web.Account;
 import core.repository.service.CrawlerService;
 import core.repository.service.exception.AccountDoesNotExistException;
@@ -47,7 +49,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             throw new AccountDoesNotExistException("Account does not exist");
         }
 
-        if (crawlerRepo.findHuntedPlayer(player.getId(), acc.getId(), serverName) != null) {
+        if (crawlerRepo.findHuntedPlayer(player.getId(), acc.getId(), serverName.substring(0, 1).toUpperCase() + serverName.substring(1)) != null) {
             throw new PlayerExistsInHuntedListException("Player already exists");
         }
         return crawlerRepo.addToHuntedList(player.getId(), acc.getId(), serverName.substring(0, 1).toUpperCase() + serverName.substring(1));
@@ -63,6 +65,37 @@ public class CrawlerServiceImpl implements CrawlerService {
         }
 
         return crawlerRepo.getHuntedList(acc.getId(), serverName.substring(0, 1).toUpperCase() + serverName.substring(1));
+    }
+
+    /* Returns the amount of players deleted from db */
+    @Override
+    public Integer removeHuntedPlayers(String[] huntedPlayerIdsArr) {
+        Long[] huntedPlayersArr = new Long[huntedPlayerIdsArr.length];
+
+        for (int i = 0; i < huntedPlayerIdsArr.length; i++) {
+            huntedPlayersArr[i] = Long.getLong(huntedPlayerIdsArr[i]);
+        }
+
+        // Iterate over array and remove one by one
+        int numberOfRemovedPlayers = 0;
+        for (Long id : huntedPlayersArr) {
+
+            TibiaHuntedPlayer huntedPlayer = crawlerRepo.findHuntedPlayer(id);
+
+            crawlerRepo.removeHuntedPlayer(huntedPlayer);
+            numberOfRemovedPlayers++;
+        }
+        return numberOfRemovedPlayers;
+    }
+
+    @Override
+    public Integer removeHuntedPlayers(List<HuntedPlayerDTO> huntedPlayerDTOs) {
+
+        for (HuntedPlayerDTO huntedPlayerDTO : huntedPlayerDTOs) {
+            TibiaHuntedPlayer huntedPlayer = crawlerRepo.findHuntedPlayer(huntedPlayerDTO.getAccountId(), huntedPlayerDTO.getHuntedPlayerName(), huntedPlayerDTO.getServerName());
+        }
+
+        return null;
     }
 
 }
