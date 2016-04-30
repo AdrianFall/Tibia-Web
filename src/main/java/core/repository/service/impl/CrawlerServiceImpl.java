@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by Adrian on 17/04/2016.
@@ -24,6 +25,8 @@ import java.util.List;
 @Service
 @Transactional
 public class CrawlerServiceImpl implements CrawlerService {
+
+    static Logger logger = Logger.getLogger(CrawlerServiceImpl.class.getName());
 
     @Autowired
     CrawlerRepo crawlerRepo;
@@ -82,8 +85,10 @@ public class CrawlerServiceImpl implements CrawlerService {
 
             TibiaHuntedPlayer huntedPlayer = crawlerRepo.findHuntedPlayer(id);
 
-            crawlerRepo.removeHuntedPlayer(huntedPlayer);
-            numberOfRemovedPlayers++;
+            if (huntedPlayer != null) {
+                crawlerRepo.removeHuntedPlayer(huntedPlayer);
+                numberOfRemovedPlayers++;
+            }
         }
         return numberOfRemovedPlayers;
     }
@@ -91,11 +96,20 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public Integer removeHuntedPlayers(List<HuntedPlayerDTO> huntedPlayerDTOs) {
 
+        int countRemovedPlayers = 0;
+
         for (HuntedPlayerDTO huntedPlayerDTO : huntedPlayerDTOs) {
+            logger.info("Finding hunted player by accId: " + huntedPlayerDTO.getAccountId() + " huntedPlayerName: " + huntedPlayerDTO.getHuntedPlayerName() + " serverName " + huntedPlayerDTO.getServerName());
             TibiaHuntedPlayer huntedPlayer = crawlerRepo.findHuntedPlayer(huntedPlayerDTO.getAccountId(), huntedPlayerDTO.getHuntedPlayerName(), huntedPlayerDTO.getServerName());
+
+            if (huntedPlayer != null) {
+                crawlerRepo.removeHuntedPlayer(huntedPlayer);
+                countRemovedPlayers++;
+                System.out.println(countRemovedPlayers);
+            }
         }
 
-        return null;
+        return countRemovedPlayers;
     }
 
 }

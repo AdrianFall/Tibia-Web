@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by Adrian on 24/04/2016.
@@ -25,6 +26,9 @@ import java.util.List;
 @Repository
 @Transactional
 public class CrawlerRepoImpl implements CrawlerRepo {
+
+    // Logger
+    static Logger logger = Logger.getLogger(CrawlerRepoImpl.class.getName());
 
     @Autowired
     SessionFactory sessionFactory;
@@ -101,7 +105,23 @@ public class CrawlerRepoImpl implements CrawlerRepo {
 
     @Override
     public TibiaHuntedPlayer findHuntedPlayer(Long accountId, String huntedPlayerName, String serverName) {
-        return null;
+        TibiaPlayer tibiaPlayer = findTibiaPlayer(huntedPlayerName, serverName);
+
+        if (tibiaPlayer == null) {
+            logger.warning("findHuntedPlayer -> couldn't find tibiaPlayer name: " + huntedPlayerName + " serverName: " + serverName);
+            return null;
+        }
+
+        TibiaHuntedPlayer huntedPlayer = (TibiaHuntedPlayer) sessionFactory.getCurrentSession()
+                .createCriteria(TibiaHuntedPlayer.class)
+                .add(Restrictions.eq("accountId", accountId))
+                .add(Restrictions.eq("tibiaServerName", serverName))
+                .add(Restrictions.eq("tibiaPlayer.id", tibiaPlayer.getId()))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .uniqueResult();
+
+        return huntedPlayer;
+
     }
 
     @Override

@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.repository.model.crawler.TibiaPlayer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
+import core.repository.model.dto.HuntedPlayerDTO;
+import core.repository.model.dto.wrapper.HuntedPlayerDTOWrapper;
+import core.repository.model.web.Account;
 import core.repository.model.web.form.HuntedPlayerForm;
+import core.repository.service.AccountService;
 import core.repository.service.CrawlerService;
 import core.repository.service.exception.AccountDoesNotExistException;
 import core.repository.service.exception.PlayerDoesNotExistException;
@@ -22,6 +26,7 @@ import org.springframework.web.context.request.WebRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +37,9 @@ public class CrawlerController {
 
     @Autowired
     CrawlerService crawlerService;
+
+    @Autowired
+    AccountService accountService;
 
     @RequestMapping(value = "/{server}/onlinePlayers", method = RequestMethod.GET)
     public @ResponseBody String getOnlinePlayers(@PathVariable("server") String serverName) {
@@ -53,17 +61,43 @@ public class CrawlerController {
     }
 
     @RequestMapping(value = "/{server}/removeHuntedPlayers", method = RequestMethod.POST)
-    public ResponseEntity<String> removeHuntedPlayers(@RequestParam("huntedPlayerIds") String huntedPlayerIds) {
+    public ResponseEntity<String> removeHuntedPlayers(Principal user, @RequestBody HuntedPlayerDTOWrapper wrapper/*@RequestBody List<HuntedPlayerDTO> huntedPlayersDTOs*/) {
 
         JSONObject responseJson = new JSONObject();
 
-        String[] huntedPlayersIdsArr = huntedPlayerIds.split(",");
+        /*String[] huntedPlayersIdsArr = huntedPlayerIds.split(",");*/
 
-        crawlerService.removeHuntedPlayers(huntedPlayersIdsArr);
 
-        responseJson.put("error", "Unknown Error, please try again soon");
-        responseJson.put("status", 520);
-        return ResponseEntity.status(520).body(responseJson.toJSONString());
+        Account account = accountService.findAccount(user.getName());
+
+        if (account == null) {
+            responseJson.put("error", "Forbidden");
+            responseJson.put("status", 401);
+            return ResponseEntity.status(401).body(responseJson.toJSONString());
+        }
+
+        /* Insert the account id to all the hunted player dtos */
+        List<HuntedPlayerDTO> huntedPlayerDTOs = new ArrayList<>();
+        wrapper.getHuntedPlayerDTOList().forEach(e -> {
+            HuntedPlayerDTO huntedPlayerDTO = new HuntedPlayerDTO(account.getId(), e.getHuntedPlayerName(), e.getServerName());
+            huntedPlayerDTOs.add(huntedPlayerDTO);
+        });
+
+        int numberOfDeleted = crawlerService.removeHuntedPlayers(huntedPlayerDTOs);
+
+        if (numberOfDeleted > 0) {
+            responseJson.put("numberOfDeleted", numberOfDeleted);
+            responseJson.put("status", 200);
+            return ResponseEntity.ok().body(responseJson.toJSONString());
+        } else {
+            responseJson.put("error", "Couldn't delete any hunted player");
+            responseJson.put("status", 400);
+            return ResponseEntity.status(400).body(responseJson.toJSONString());
+        }
+
+        /*responseJson.put("error", "Unknown Error, please try again soon");
+        responseJson.put("status", 500);
+        return ResponseEntity.status(500).body(responseJson.toJSONString());*/
     }
 
 
@@ -121,7 +155,7 @@ public class CrawlerController {
         }
 
         responseJson.put("error", "Unknown Error, please try again soon");
-        responseJson.put("status", 520);
-        return ResponseEntity.status(520).body(responseJson.toJSONString());
+        responseJson.put("status", 500);
+        return ResponseEntity.status(500).body(responseJson.toJSONString());
     }
 }
