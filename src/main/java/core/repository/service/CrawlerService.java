@@ -4,6 +4,7 @@ import core.repository.model.crawler.TibiaPlayer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
 import core.repository.model.dto.HuntedPlayerDTO;
+import core.repository.model.dto.ServerDTO;
 import core.repository.service.exception.AccountDoesNotExistException;
 import core.repository.service.exception.PlayerDoesNotExistException;
 import core.repository.service.exception.PlayerExistsInHuntedListException;
@@ -23,4 +24,6 @@ public interface CrawlerService {
     Integer removeHuntedPlayers(String[] huntedPlayerIdsArr);
     /* returns amount of deleted hunted players*/
     Integer removeHuntedPlayers(List<HuntedPlayerDTO> huntedPlayerDTOs);
+
+    List<ServerDTO> getServerDTOs();
 }

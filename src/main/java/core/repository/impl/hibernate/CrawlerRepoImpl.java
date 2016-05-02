@@ -4,6 +4,7 @@ import core.repository.AccountRepo;
 import core.repository.CrawlerRepo;
 import core.repository.model.crawler.TibiaHuntedPlayer;
 import core.repository.model.crawler.TibiaPlayer;
+import core.repository.model.crawler.TibiaServer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
 import core.repository.model.web.Account;
@@ -67,6 +68,7 @@ public class CrawlerRepoImpl implements CrawlerRepo {
         return onlinePlayers;
     }
 
+
     @Override
     public TibiaPlayer findTibiaPlayer(String playerName, String serverName) {
 
@@ -125,6 +127,30 @@ public class CrawlerRepoImpl implements CrawlerRepo {
     }
 
     @Override
+    public List<TibiaServer> getServers() {
+        List<TibiaServer> servers = sessionFactory.getCurrentSession()
+                .createCriteria(TibiaServer.class)
+                .list();
+        return servers;
+    }
+
+    @Override
+    public TibiaServer findTibiaServer(Long serverId) {
+        return null;
+    }
+
+    @Override
+    public Integer getOnlinePlayersCount(String serverName) {
+        Long count = (Long) sessionFactory.getCurrentSession()
+                .createCriteria(TibiaPlayer.class)
+                .setProjection(Projections.rowCount())
+                .add(Restrictions.eq("isOnline", true))
+                .add(Restrictions.eq("server.name", serverName))
+                .uniqueResult();
+        return count.intValue();
+    }
+
+    @Override
     public TibiaHuntedPlayer findHuntedPlayer(Long huntedPlayerId) {
         TibiaHuntedPlayer huntedPlayer = (TibiaHuntedPlayer) sessionFactory.getCurrentSession()
                 .createCriteria(TibiaHuntedPlayer.class)
@@ -152,42 +178,6 @@ public class CrawlerRepoImpl implements CrawlerRepo {
         return findHuntedPlayer(playerId, accountId, serverName);
     }
 
-
-    @Override
-    public boolean removeFromOlderaHuntedList(Long playerId, Long accountId) {
-        TibiaHuntedPlayer olderaHuntedPlayer = (TibiaHuntedPlayer) sessionFactory.getCurrentSession()
-                .createCriteria(TibiaHuntedPlayer.class)
-                .add(Restrictions.eq("accountId", accountId))
-                .add(Restrictions.eq("tibiaServerName", "Oldera"))
-                .add(Restrictions.eq("tibiaPlayerId", playerId))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .uniqueResult();
-
-        if (olderaHuntedPlayer != null) {
-            sessionFactory.getCurrentSession()
-                    .delete(olderaHuntedPlayer);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean removeFromThroniaHuntedList(Long playerId, Long accountId) {
-        TibiaHuntedPlayer throniaHuntedPlayer = (TibiaHuntedPlayer) sessionFactory.getCurrentSession()
-                .createCriteria(TibiaHuntedPlayer.class)
-                .add(Restrictions.eq("accountId", accountId))
-                .add(Restrictions.eq("tibiaServerName", "Thronia"))
-                .add(Restrictions.eq("tibiaPlayerId", playerId))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .uniqueResult();
-
-        if (throniaHuntedPlayer != null) {
-            sessionFactory.getCurrentSession()
-                    .delete(throniaHuntedPlayer);
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public List<TibiaPlayer> getHuntedList(Long accountId, String serverName) {

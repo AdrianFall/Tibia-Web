@@ -4,9 +4,11 @@ import core.repository.AccountRepo;
 import core.repository.CrawlerRepo;
 import core.repository.model.crawler.TibiaHuntedPlayer;
 import core.repository.model.crawler.TibiaPlayer;
+import core.repository.model.crawler.TibiaServer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
 import core.repository.model.dto.HuntedPlayerDTO;
+import core.repository.model.dto.ServerDTO;
 import core.repository.model.web.Account;
 import core.repository.service.CrawlerService;
 import core.repository.service.exception.AccountDoesNotExistException;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -110,6 +113,27 @@ public class CrawlerServiceImpl implements CrawlerService {
         }
 
         return countRemovedPlayers;
+    }
+
+    @Override
+    public List<ServerDTO> getServerDTOs() {
+
+        List<TibiaServer> tibiaServers = crawlerRepo.getServers();
+        logger.info("getServerDTOs -> obtained " + tibiaServers.size() + " servers");
+
+
+        List<ServerDTO> serverDTOs = new ArrayList<>();
+
+        for (TibiaServer server : tibiaServers) {
+            // Get number of players online
+            Integer onlinePlayerCount = crawlerRepo.getOnlinePlayersCount(server.getName());
+            int numberOfPlayersOnline = (onlinePlayerCount != null) ? onlinePlayerCount : 0;
+            ServerDTO serverDTO = new ServerDTO(server.isOnline(), server.getName(), numberOfPlayersOnline);
+            serverDTOs.add(serverDTO);
+        }
+
+        logger.info("getServerDTOs -> returning " + serverDTOs.size() + " serverDTOs");
+        return serverDTOs;
     }
 
 }

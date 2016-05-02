@@ -6,6 +6,7 @@ import core.repository.model.crawler.TibiaPlayer;
 import core.repository.model.crawler.servers.oldera.OlderaPlayer;
 import core.repository.model.crawler.servers.thronia.ThroniaPlayer;
 import core.repository.model.dto.HuntedPlayerDTO;
+import core.repository.model.dto.ServerDTO;
 import core.repository.model.dto.wrapper.HuntedPlayerDTOWrapper;
 import core.repository.model.web.Account;
 import core.repository.model.web.form.HuntedPlayerForm;
@@ -100,6 +101,17 @@ public class CrawlerController {
         return ResponseEntity.status(500).body(responseJson.toJSONString());*/
     }
 
+    @RequestMapping(value = "/getServers", method = RequestMethod.GET)
+    public @ResponseBody List<ServerDTO> getServers() {
+        return crawlerService.getServerDTOs();
+        /*JSONObject responseJson = new JSONObject();
+
+        List<ServerDTO> serverList =  crawlerService.getServerDTOs();
+
+        responseJson.put("error", "Unknown Error, please try again soon");
+        responseJson.put("status", 500);
+        return ResponseEntity.status(500).body(responseJson.toJSONString());*/
+    }
 
     @RequestMapping(value = "/{server}/getHuntedList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getHuntedList(@PathVariable("server") String serverName, Principal user, HttpServletRequest request) {
